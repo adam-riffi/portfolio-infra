@@ -27,11 +27,12 @@ Operating manual for coding agents in this repository. Codex and Copilot read th
 | Type check | `pnpm typecheck` |
 | Build | `pnpm build` |
 | Bundle the action (commit `actions/pr-meme/dist`) | `pnpm build` |
-| Lint workflows | `actionlint` |
-| Drive sync dry run (needs `gcloud auth application-default login`) | `pnpm sync --dry-run` |
+| Build and check committed bundle freshness | `pnpm build:check` |
+| Lint workflows (requires actionlint on PATH) | `pnpm lint:workflows` |
+| Drive sync dry run (planned for M3) | `pnpm sync --dry-run` (not implemented yet) |
 | Check all | `pnpm check` |
 
-Keep this table accurate: when you add or change a script, update the table in the same PR. Until milestone M0 creates them, these commands describe the intended scripts.
+Keep this table accurate: when you add or change a script, update the table in the same PR. Install the pinned Node and pnpm versions and actionlint 1.7.12 before running the checks; see README.md.
 
 ## Rules
 

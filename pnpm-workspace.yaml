@@ -1,0 +1,3 @@
+# One private package; allow only esbuild's native binary installation.
+allowBuilds:
+  esbuild: true
