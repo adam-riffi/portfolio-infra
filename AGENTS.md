@@ -28,7 +28,7 @@ Operating manual for coding agents in this repository. Codex and Copilot read th
 | Build | `pnpm build` |
 | Bundle the action (commit `actions/pr-meme/dist`) | `pnpm build` |
 | Build and check committed bundle freshness | `pnpm build:check` |
-| Lint workflows (requires actionlint on PATH) | `pnpm lint:workflows` |
+| Lint workflows and caller template (requires actionlint on PATH) | `pnpm lint:workflows` |
 | Drive sync dry run (planned for M3) | `pnpm sync --dry-run` (not implemented yet) |
 | Check all | `pnpm check` |
 
