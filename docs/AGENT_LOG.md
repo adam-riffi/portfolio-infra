@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m0/01-scaffold · #1
+- Done: Added the pinned TypeScript toolchain, empty action bundle, five required CI checks and local setup documentation.
+- Tests: Red commit `9fe7f6b` demonstrates the missing build; `pnpm check` passes with the standalone bundle smoke test. CI and stale-bundle rejection are being verified on the implementation commit.
+- Scope/decisions: M0 only; one private root package, with development tooling dependencies. No design changes.
+- Next: Verify the scaffold, then complete and test the shared templates in the second PR.
+
 ## 2026-10-04 · claude · (none) · (none)
 - Done: Repository pack created: DESIGN.md, ENGINEERING.md, AGENTS.md, CLAUDE.md, Copilot instructions, PR template, ADR template.
 - Tests: none yet.
