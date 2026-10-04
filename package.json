@@ -1,0 +1,26 @@
+{
+  "name": "@adam-riffi/portfolio-infra",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.9.1",
+  "engines": { "node": ">=24.21.0 <25" },
+  "scripts": {
+    "test": "vitest run --coverage",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "build": "node scripts/build.ts",
+    "build:check": "pnpm build && git diff --exit-code -- actions/pr-meme/dist",
+    "lint:workflows": "actionlint",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build:check && pnpm lint:workflows"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "24.19.1",
+    "@vitest/coverage-v8": "5.0.3",
+    "esbuild": "0.28.2",
+    "fast-check": "4.10.2",
+    "typescript": "7.0.2",
+    "vitest": "5.0.3"
+  }
+}
