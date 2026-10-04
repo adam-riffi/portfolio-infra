@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "build": "node scripts/build.ts",
     "build:check": "pnpm build && git diff --exit-code -- actions/pr-meme/dist",
-    "lint:workflows": "actionlint",
+    "lint:workflows": "actionlint && actionlint templates/pr-meme.yml",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build:check && pnpm lint:workflows"
   },
   "devDependencies": {
@@ -23,6 +23,7 @@
     "esbuild": "0.28.2",
     "fast-check": "4.10.2",
     "typescript": "7.0.2",
-    "vitest": "5.0.3"
+    "vitest": "5.0.3",
+    "yaml": "2.9.1"
   }
 }

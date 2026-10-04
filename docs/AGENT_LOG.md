@@ -14,6 +14,18 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m0/02-templates · #1, #2
+- Done: Squash-merged scaffold #1 and restacked templates #2 onto main after the user's go-ahead. The restacked tree matches the independently reviewed implementation.
+- Tests: Both original PR heads passed all five CI checks with no outstanding review findings. Rechecking the restacked #2 before its squash merge; eight tests cover the scaffold and template contracts.
+- Scope/decisions: M0 only; merges proceed bottom-up through GitHub with the required meme comments.
+- Next: Finish #2's merge and verify main CI. M1 selection core is the next implementation milestone.
+
+## 2026-10-05 · codex · stack/m0/02-templates · #2
+- Done: Added the exact documented meme caller, weekly grouped Dependabot templates and repository configuration, drift checks and copying instructions.
+- Tests: Red commit `58ee0ac` has four expected missing-template failures and two passing parity checks. `pnpm check` passes with eight tests, bundle freshness and actionlint for active workflows plus the caller template.
+- Scope/decisions: M0 only; `yaml` is test-only tooling. Caller activation remains M4; no design changes.
+- Next: Verify all checks, obtain independent review, then hand off #1 and #2 for Georges to merge bottom-up.
+
 ## 2026-10-05 · codex · stack/m0/01-scaffold · #1
 - Done: Added the pinned TypeScript toolchain, empty action bundle, five required CI checks and local setup documentation. Independent review caught a disabled lint preset; restored recommended rules with a regression test.
 - Tests: Red commit `9fe7f6b` demonstrates the missing build; `pnpm check` passes, and a deliberate stale-bundle probe is rejected. All five CI jobs passed on `d764a3f`.

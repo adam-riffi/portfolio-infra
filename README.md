@@ -30,12 +30,25 @@ measure. The empty entry point and generated bundle are excluded from coverage.
 
 - `actions/pr-meme/`: empty source, bundle and smoke test.
 - `scripts/build.ts`: esbuild configuration.
-- `templates/`: shared repository standards and PR template.
+- `templates/`: shared standards, PR template, Dependabot configuration and meme caller.
 - `.github/workflows/ci.yml`: required lint, typecheck, test, build and actionlint checks.
 
 This is one private package. M1 adds selection logic; M2 supplies action metadata,
 GitHub integration and dogfooding. Drive sync, database bootstrap and uptime follow
 in later milestones. This repository runs on GitHub Actions only.
+
+## Using the templates
+
+Copy `templates/ENGINEERING.md` to `docs/ENGINEERING.md`, and copy
+`templates/pull_request_template.md` and `templates/dependabot.yml` into `.github/`.
+The Dependabot template groups weekly npm/pnpm and GitHub Actions updates; other
+language repositories should adapt its package ecosystem to their manifests.
+After M4 publishes `v1`, copy `templates/pr-meme.yml` to `.github/workflows/` in
+portfolio repositories. It matches ENGINEERING.md section 14 exactly, needs no
+secrets, and guards against execution in forks or for fork PRs.
+
+Template tests enforce copy parity, the exact documented caller and weekly grouped
+updates. `pnpm lint:workflows` checks both active workflows and the caller template.
 
 ## License
 
