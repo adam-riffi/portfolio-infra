@@ -23,6 +23,7 @@ Operating manual for coding agents in this repository. Codex and Copilot read th
 | --- | --- |
 | Install | `pnpm install` |
 | Unit and property tests | `pnpm test` |
+| Integration tests (Postgres at `DATABASE_URL`, default `localhost:54322`) | `pnpm test:integration` |
 | Lint / format | `pnpm lint` / `pnpm format` |
 | Type check | `pnpm typecheck` |
 | Build | `pnpm build` |

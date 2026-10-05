@@ -36,6 +36,32 @@ jobs:
         if: matrix.command == 'build'
         run: git diff --exit-code -- actions/pr-meme/dist
 
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        # Supabase's image: same Postgres major and extensions as the shared project.
+        image: supabase/postgres:17.11.0.003
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["54322:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:54322/postgres
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:integration
+
   actionlint:
     runs-on: ubuntu-latest
     timeout-minutes: 15
