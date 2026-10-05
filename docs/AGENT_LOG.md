@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · claude · stack/m5/03-project · #16
+- Done: `supabase/PROJECT.md`: live Auth settings (anonymous and email on, ES256 JWKS, `https://*.vercel.app` redirects), extensions (defaults; bootstrap adds pg_cron, pg_net, vector), and the phone-friendly runbook (bootstrap, passwords, check.sql, pooler connection strings per app).
+- Tests: none (documentation); settings read from `/auth/v1/settings`, the JWKS and the Supabase MCP extension list.
+- Scope/decisions: completes M5 deliverables; acceptance is the integration job (#14, #15).
+- Next: Georges merges #14–#16, runs bootstrap.sql and sets the dash_* passwords; then dashboard-builder's secrets and deploy.
+
 ## 2026-10-05 · claude · stack/m5/02-check · #15
 - Done: `supabase/check.sql`: one row per app/Data API role and app schema with `usage`, `create`, read/write over existing tables (null while none) and default privileges for future `postgres` tables. Integration files run one at a time (shared database).
 - Tests: `test/integration/check.test.ts` asserts the full 8 × 6 matrix after the bootstrap and a `postgres`-created table in every schema; 0 mismatches on PGlite.
