@@ -39250,7 +39250,8 @@ var imageSchema = external_exports.object({
   sha256: external_exports.string().regex(/^[a-f0-9]{64}$/),
   width: external_exports.int().positive(),
   height: external_exports.int().positive(),
-  bytes: external_exports.int().positive()
+  bytes: external_exports.int().positive(),
+  driveMd5: external_exports.string().regex(/^[a-f0-9]{32}$/).optional()
 }).refine(
   (image) => ["webp", "gif"].some(
     (extension) => image.path === `memes/images/${image.category}/${image.id}.${extension}`

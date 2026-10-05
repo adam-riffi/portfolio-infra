@@ -14,6 +14,18 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m3/01-diff · #10
+- Done: Implemented ID/checksum/category diffing and canonical manifests with no-op timestamps.
+- Tests: Red ab30487 precedes implementation; added/changed/removed/renamed/moved tests and a 500-case seeded partition property.
+- Scope/decisions: M3; proposed ADR0001 adds optional upstream driveMd5 without changing manifest version.
+- Next: Drive listing and real image processing follow.
+
+## 2026-10-05 · codex · stack/m3/01-diff · pending
+- Done: Planned Drive ID/checksum diffing and stable manifest serialization.
+- Tests: Test-first added/changed/removed/category move/rename/no-op cases and seeded diff invariants.
+- Scope/decisions: M3; propose optional upstream Drive checksum metadata because the design only stores processed SHA-256.
+- Next: Implement, review, then Drive listing and image processing.
+
 ## 2026-10-05 · codex · stack/m2/03-runtime · #9
 - Done: Implemented the Node 24 action, validated HTTP orchestration, fail-open outputs/summaries and guarded serialized dogfooding.
 - Tests: Red f81ad44 precedes implementation; MSW exercises posting/re-run, pages, skips and API failures. Bundle smoke verifies unsupported-event exit without dependencies.

@@ -131,12 +131,16 @@ Outputs: `image-id`, `skipped-reason`.
   "generatedAt": "2026-10-05T03:00:00Z",
   "images": [
     { "id": "<drive file id>", "category": "fix", "path": "memes/images/fix/<id>.webp",
-      "sha256": "…", "width": 800, "height": 600, "bytes": 81234 }
+      "sha256": "…", "width": 800, "height": 600, "bytes": 81234,
+      "driveMd5": "<optional upstream MD5 checksum>" }
   ]
 }
 ```
 
 **Caller workflow:** exactly the snippet in ENGINEERING.md §14, also stored as `templates/pr-meme.yml`.
+
+Optional `driveMd5` preserves upstream checksums for no-op syncs; see proposed ADR
+[0001](adr/0001-upstream-drive-checksum.md). Existing v1 manifests remain valid.
 
 **Uptime targets** (`uptime/targets.json`): `[{ "name": "dashboard-builder", "url": "https://…/api/health", "expect": { "status": 200, "bodyIncludes": "ok" } }]`.
 
