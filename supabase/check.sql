@@ -1,14 +1,16 @@
 -- Privilege report for the shared `portfolio` project: run after bootstrap.sql (and after an
 -- app's migrations) in the Supabase SQL editor. One row per app or Data API role and app schema.
 --
--- Expected: a writer (`<app>_app`) has every column true on its own schema; `dash_reader` has
--- usage, tables_read and future_read on `dash_demo`; every other row is all false.
+-- Expected: 54 rows (9 roles x 6 schemas); fewer means a role or schema is missing, so the
+-- bootstrap has not run. A writer (`<app>_app`) has every column true on its own schema;
+-- `dash_reader` has usage, tables_read and future_read on `dash_demo`; every other row is all
+-- false, except tables_* on tables an app revoked on purpose (its migration history).
 --   usage, create   schema privileges
 --   tables_*        over the schema's existing tables (null while it has none)
 --   future_*        default privileges for tables `postgres` (migrations) creates later
 with roles (role) as (
   values ('dash_app'), ('dash_reader'), ('wf_app'), ('traces_app'), ('rag_app'), ('oauth_app'),
-    ('anon'), ('authenticated')
+    ('anon'), ('authenticated'), ('service_role')
 ),
 schemas (schema) as (
   values ('dash'), ('dash_demo'), ('wf'), ('traces'), ('rag'), ('oauth')
