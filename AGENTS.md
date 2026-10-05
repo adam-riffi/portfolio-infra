@@ -30,7 +30,7 @@ Operating manual for coding agents in this repository. Codex and Copilot read th
 | Bundle the action (commit `actions/pr-meme/dist`) | `pnpm build` |
 | Build and check committed bundle freshness | `pnpm build:check` |
 | Lint workflows and caller template (requires actionlint on PATH) | `pnpm lint:workflows` |
-| Drive sync dry run (planned for M3) | `pnpm sync --dry-run` (not implemented yet) |
+| Drive sync / dry run | `pnpm sync` / `pnpm sync --dry-run` |
 | Check all | `pnpm check` |
 
 Keep this table accurate: when you add or change a script, update the table in the same PR. Install the pinned Node and pnpm versions and actionlint 1.7.12 before running the checks; see README.md.

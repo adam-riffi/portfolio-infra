@@ -13,6 +13,7 @@
     "format": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "build": "node scripts/build.ts",
+    "sync": "node scripts/drive-sync/main.ts",
     "build:check": "pnpm build && git diff --exit-code -- actions/pr-meme/dist",
     "lint:workflows": "actionlint && actionlint templates/pr-meme.yml",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build:check && pnpm lint:workflows"

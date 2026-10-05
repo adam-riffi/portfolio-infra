@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m3/03-sync · #12
+- Done: Implemented checksum-verified prepare/write sync, preserving last valid images on bad updates, removing obsolete paths and providing a no-download dry run.
+- Tests: Red815fac1 precedes implementation; 126 tests pass with100% measured source; real filesystem imports are unchanged on second run.
+- Scope/decisions: M3 only; CLI reads access tokens from environment, never logs values.
+- Next: Review, then scheduled/manual WIF workflow and live import when credentials exist.
+
 ## 2026-10-05 · codex · stack/m3/03-sync · pending
 - Done: Planned filesystem sync with complete-listing protection, source checksum verification and dry runs.
 - Tests: Will test actual image bytes and temporary repository trees for import, no-op, move, removal and failures.
