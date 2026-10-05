@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m1/02-image-selection · #5, #6
+- Done: Completed M1 title parsing, category → general → all fallback, stable ID sorting and unsigned FNV-1a choice. Both PRs received independent reviews with no findings; #5 is merged and #6 is restacked onto main with an identical implementation tree.
+- Tests: Red commit `0895bb9` (restacked as `de01129`) has 19 expected missing-function failures. `pnpm check` passes 60 tests, including three seeded 500-case properties, with 100% selection-core coverage. Original PR heads passed all five CI checks; the restacked head is rechecked before merge.
+- Scope/decisions: M1 only; no dependencies or design changes. Checked [GitHub runtime metadata](https://docs.github.com/en/actions/reference/workflows-and-actions/metadata-syntax): Node 24 is the newest documented action runtime, matching the bundle target; M2 will set `runs.using: node24`.
+- Next: M2 supplies manifest validation/fetching, GitHub integration and dogfooding. Dependency PRs #3 and #4 are separate maintenance work; #4 proposes Node 26 types while the runtime is pinned to Node 24.
+
 ## 2026-10-05 · codex · stack/m1/01-title-parser · #5
 - Done: Verified M0 is merged with green main CI. Added a pure title parser for all ten categories, case-insensitive types, scopes and breaking markers; malformed titles fall back to general.
 - Tests: Red commit `ed5235f` fails because the parser module is absent. `pnpm check` passes 40 tests with 100% selection-core coverage using the pinned toolchain.
