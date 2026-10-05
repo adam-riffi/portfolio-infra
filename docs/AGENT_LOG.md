@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m1/01-title-parser · pending
+- Done: Verified M0 is merged and main CI is green; started the M1 title-parser PR.
+- Tests: Pinned Node 24.21.0, pnpm 12.9.1 and actionlint 1.7.12 pass `pnpm check` (eight baseline tests).
+- Scope/decisions: M1 only, in two PRs: Conventional Commit parsing, then deterministic pool selection. No design changes.
+- Next: Commit failing parser tests, implement, run the full checks and obtain independent review before merging.
+
 ## 2026-10-05 · codex · stack/m0/02-templates · #1, #2
 - Done: Squash-merged scaffold #1 and restacked templates #2 onto main after the user's go-ahead. The restacked tree matches the independently reviewed implementation.
 - Tests: Both original PR heads passed all five CI checks with no outstanding review findings. Rechecking the restacked #2 before its squash merge; eight tests cover the scaffold and template contracts.
