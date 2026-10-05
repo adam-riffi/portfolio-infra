@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · claude · stack/m5/02-check · #15
+- Done: `supabase/check.sql`: one row per app/Data API role and app schema with `usage`, `create`, read/write over existing tables (null while none) and default privileges for future `postgres` tables. Integration files run one at a time (shared database).
+- Tests: `test/integration/check.test.ts` asserts the full 8 × 6 matrix after the bootstrap and a `postgres`-created table in every schema; 0 mismatches on PGlite.
+- Scope/decisions: the expected matrix is computed in the test, not a snapshot file.
+- Next: stack/m5/03-project (PROJECT.md, runbook, connection-string templates).
+
 ## 2026-10-05 · claude · stack/m5/01-bootstrap · #14
 - Done: `supabase/bootstrap.sql` (idempotent): schemas and passwordless login roles for all five apps (`dash_app`/`dash_reader`, `wf_app`, `traces_app`, `rag_app`, `oauth_app`), writers with USAGE+CREATE and read-write default privileges for tables `postgres` creates, `dash_reader` read-only, schemas revoked from PUBLIC; extensions `pg_cron`, `pg_net`, `vector`. New CI `integration` job on `supabase/postgres` and `pnpm test:integration`.
 - Tests: `test/integration/bootstrap.test.ts`: runs twice; every writer creates/writes/reads in its own schema; every role (and `anon`, `authenticated`) gets `permission denied` on every other app schema; `dash_reader` reads but cannot write `dash_demo`; migration-created tables are usable. Checked locally on PGlite (no Docker); CI is authoritative.
