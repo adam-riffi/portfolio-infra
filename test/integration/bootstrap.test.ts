@@ -150,6 +150,7 @@ describe("bootstrap.sql", () => {
     await expect(
       as("dash_app", () => query("select id from dash.history")),
     ).rejects.toThrow("permission denied for table history");
+    await query("drop table dash.history");
   });
 
   it("lets rag_app use vector types in its own schema", async () => {
