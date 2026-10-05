@@ -8,7 +8,7 @@ export const image = {
   bytes: 1234,
 };
 export const manifest = {
-  version: 1,
+  version: 1 as const,
   generatedAt: "2026-10-05T03:00:00Z",
   images: [image],
 };
