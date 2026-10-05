@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m3/02-drive-images · #11
+- Done: Implemented complete paginated Drive walks, safe IDs, bounded downloads and real sharp image processing.
+- Tests: Red5294f4c precedes implementation; 120 tests pass with 100% measured coverage. Real PNG/static and animated GIF fixtures cover resize, preservation, MIME and byte ceilings.
+- Scope/decisions: M3; root category folders apply to descendants; sharp is the specified adapter.
+- Next: Review, then transactional sync/WIF workflow.
+
 ## 2026-10-05 · codex · stack/m3/02-drive-images · pending
 - Done: Planned recursive paginated Drive listing and bounded real image processing.
 - Tests: Will use a fake Drive HTTP client and real sharp fixtures for resize/GIF/size limits.

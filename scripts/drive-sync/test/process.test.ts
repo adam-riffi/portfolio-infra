@@ -1,7 +1,46 @@
 import { createHash } from "node:crypto";
 import sharp from "sharp";
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { processImage } from "../src/process.ts";
+
+const animatedGif = Buffer.from(
+  "R0lGODlhAgACAIEAAP8AAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQACgAAACwAAAAAAgACAAAIBgABCAQQEAAh+QQBCgABACwAAAAAAgACAIEAAP8AAAAAAAAAAAAIBgABCAQQEAA7",
+  "base64",
+);
+test("preserves small animated GIF bytes and first-frame dimensions", async () => {
+  const result = await processImage(animatedGif, "image/gif");
+  expect(result).toMatchObject({ extension: "gif", width: 2, height: 2 });
+  expect(result.data).toEqual(animatedGif);
+  await expect(
+    processImage(
+      Buffer.concat([animatedGif, Buffer.alloc(5_000_000)]),
+      "image/gif",
+    ),
+  ).rejects.toThrow("too large");
+});
+test("re-encodes static GIFs", async () => {
+  const source = await sharp({
+    create: { width: 2, height: 2, channels: 3, background: "red" },
+  })
+    .gif()
+    .toBuffer();
+  expect((await processImage(source, "image/gif")).extension).toBe("webp");
+});
+
+test("uses declared height when the image adapter omits optional pageHeight", async () => {
+  const metadata = await sharp(animatedGif).metadata();
+  const { pageHeight: _pageHeight, ...withoutPageHeight } = metadata;
+  const adapter = vi
+    .spyOn(sharp.prototype, "metadata")
+    .mockResolvedValue(withoutPageHeight);
+  try {
+    expect((await processImage(animatedGif, "image/gif")).height).toBe(
+      metadata.height,
+    );
+  } finally {
+    adapter.mockRestore();
+  }
+});
 
 test("re-encodes large images to WebP within 800px and records actual output metadata", async () => {
   const source = await sharp({

@@ -82,6 +82,22 @@ test("rejects failed HTTP and unsafe folder IDs", async () => {
   ).rejects.toThrow("HTTP 403");
   await expect(listImages("bad'query", "token")).rejects.toThrow();
 });
+
+test("terminates folder cycles and rejects repeated pagination tokens", async () => {
+  const cyclic = vi
+    .fn<typeof fetch>()
+    .mockResolvedValue(Response.json({ files: [folder("root", "fix")] }));
+  expect(await listImages("root", "token", cyclic)).toEqual([]);
+  expect(cyclic).toHaveBeenCalledOnce();
+  const repeated = vi
+    .fn<typeof fetch>()
+    .mockImplementation(async () =>
+      Response.json({ files: [], nextPageToken: "repeat" }),
+    );
+  await expect(listImages("root", "token", repeated)).rejects.toThrow(
+    "Repeated",
+  );
+});
 test("downloads with alt=media, bounds the byte stream, and refuses unsafe IDs", async () => {
   const request = vi
     .fn<typeof fetch>()
