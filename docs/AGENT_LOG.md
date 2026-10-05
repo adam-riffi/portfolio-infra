@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m2/01-manifest · pending
+- Done: Implemented strict manifest validation, safe image paths and bounded-time HTTPS fetching.
+- Tests: Test-first commit 60bf387; 81 tests and 100% core coverage.
+- Scope/decisions: M2; zod is specified boundary validation; @actions/core is platform glue, msw is test tooling.
+- Next: Review and merge, then implement comment idempotency and skip rules.
+
 ## 2026-10-05 · codex · stack/m1/02-image-selection · #5, #6
 - Done: Completed M1 title parsing, category → general → all fallback, stable ID sorting and unsigned FNV-1a choice. Both PRs received independent reviews with no findings; #5 is merged and #6 is restacked onto main with an identical implementation tree.
 - Tests: Red commit `0895bb9` (restacked as `de01129`) has 19 expected missing-function failures. `pnpm check` passes 60 tests, including three seeded 500-case properties, with 100% selection-core coverage. Original PR heads passed all five CI checks; the restacked head is rechecked before merge.
