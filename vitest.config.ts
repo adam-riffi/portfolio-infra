@@ -10,7 +10,7 @@ export default defineConfig({
         "scripts/*/src/**/*.ts",
         "uptime/**/*.ts",
       ],
-      // The entry point stays empty until M2; the selection core is measured.
+      // The runner entry point is platform glue; run.ts and all core are measured.
       exclude: ["actions/pr-meme/src/main.ts"],
       reporter: ["text", "json-summary"],
       thresholds: {
