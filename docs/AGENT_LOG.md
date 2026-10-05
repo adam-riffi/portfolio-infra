@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m3/01-diff · #10
+- Done: Implemented ID/checksum/category diffing and canonical manifests with no-op timestamps.
+- Tests: Red ab30487 precedes implementation; added/changed/removed/renamed/moved tests and a 500-case seeded partition property.
+- Scope/decisions: M3; proposed ADR0001 adds optional upstream driveMd5 without changing manifest version.
+- Next: Drive listing and real image processing follow.
+
 ## 2026-10-05 · codex · stack/m3/01-diff · pending
 - Done: Planned Drive ID/checksum diffing and stable manifest serialization.
 - Tests: Test-first added/changed/removed/category move/rename/no-op cases and seeded diff invariants.

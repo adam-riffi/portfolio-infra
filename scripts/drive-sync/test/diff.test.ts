@@ -44,6 +44,13 @@ test("refuses ambiguous duplicate Drive IDs", () => {
   expect(() => diffFiles(previous, [file, file])).toThrow("duplicate");
 });
 test("preserves timestamps and bytes on no-op and sorts changed entries", () => {
+  expect(
+    stableManifest(
+      { ...manifest, images: previous },
+      previous,
+      "2027-01-01T00:00:00Z",
+    ),
+  ).toBe(`${JSON.stringify({ ...manifest, images: previous }, null, 2)}\n`);
   const unchanged = stableManifest(manifest, [image], "2027-01-01T00:00:00Z");
   expect(unchanged).toBe(`${JSON.stringify(manifest, null, 2)}\n`);
   const another = {
