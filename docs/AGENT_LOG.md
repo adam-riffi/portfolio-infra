@@ -14,11 +14,11 @@ Entry format:
 
 ---
 
-## 2026-10-05 · codex · stack/m1/02-image-selection · pending
-- Done: Started the second M1 PR for category fallback, FNV-1a hashing and stable image choice.
-- Tests: Planned example and seeded property tests for deterministic choice, pool membership, nonempty fallback, reorder stability and input immutability.
-- Scope/decisions: Pure selection core only; manifest fetching and the action entry point remain M2. No design changes.
-- Next: Commit the failing tests, implement selection, run all checks and obtain independent review.
+## 2026-10-05 · codex · stack/m1/02-image-selection · #6
+- Done: Added category → general → all fallback, stable ID sorting and unsigned FNV-1a selection by repository#PR number. Empty manifests return no image; input records and order stay untouched.
+- Tests: Red commit `0895bb9` has 19 expected missing-function failures. `pnpm check` passes 60 tests, including three seeded 500-case properties, with 100% selection-core coverage.
+- Scope/decisions: M1 only; no dependencies or design changes. Checked [GitHub runtime metadata](https://docs.github.com/en/actions/reference/workflows-and-actions/metadata-syntax): Node 24 is the newest documented action runtime, matching the bundle target; M2 will set `runs.using: node24`.
+- Next: Independent review and CI for #6, then merge #5 and restack/merge #6. M2 supplies manifest validation/fetching, GitHub integration and dogfooding.
 
 ## 2026-10-05 · codex · stack/m1/01-title-parser · #5
 - Done: Verified M0 is merged with green main CI. Added a pure title parser for all ten categories, case-insensitive types, scopes and breaking markers; malformed titles fall back to general.

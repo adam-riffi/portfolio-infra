@@ -6,10 +6,21 @@ uptime checks and repository templates.
 [![CI](https://github.com/adam-riffi/portfolio-infra/actions/workflows/ci.yml/badge.svg)](https://github.com/adam-riffi/portfolio-infra/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-M0 establishes the tooling and CI; M1 adds the selection core. The action entry
-point remains empty until M2 integrates it with GitHub.
+M0 tooling and M1 selection are implemented. The action entry point remains empty
+until M2 integrates selection with GitHub.
 The [design](docs/DESIGN.md) defines subsequent milestones and architecture;
 [engineering standards](docs/ENGINEERING.md) define the delivery workflow.
+
+## Meme selection
+
+The pure core in `actions/pr-meme/src/select.ts` parses Conventional Commit titles
+case-insensitively, including scopes and breaking-change markers. Unknown or
+malformed titles use `general`.
+
+Selection prefers the matching category, then `general`, then all images. It sorts
+the pool by image ID and uses the unsigned FNV-1a hash of `repository#PR number`
+modulo the pool size. Reordering a manifest with unique Drive IDs preserves the
+choice, and selection leaves the input untouched. An empty manifest returns no image.
 
 ## Running locally
 
@@ -26,16 +37,17 @@ All commands are listed in [AGENTS.md](AGENTS.md).
 
 The bundle smoke test executes the real build, then runs the output in an isolated
 directory without credentials or runtime dependencies. Coverage is configured for
-80% overall and 95% per file in the designated core; M0 has no executable core to
-measure. M1 tests Conventional Commit title parsing against valid categories and
-malformed input. The empty entry point and generated bundle are excluded from coverage.
+80% overall and 95% per file in the designated core. Unit tests cover title parsing,
+fallback pools and known FNV-1a vectors. Seeded property tests run 500 cases each
+for pool availability, deterministic membership and manifest reordering. The empty
+entry point and generated bundle are excluded from coverage.
 
 - `actions/pr-meme/`: selection core, bundle, unit tests and smoke test.
 - `scripts/build.ts`: esbuild configuration.
 - `templates/`: shared standards, PR template, Dependabot configuration and meme caller.
 - `.github/workflows/ci.yml`: required lint, typecheck, test, build and actionlint checks.
 
-This is one private package. M1 completes selection logic; M2 supplies action metadata,
+This is one private package. M2 supplies action metadata,
 GitHub integration and dogfooding. Drive sync, database bootstrap and uptime follow
 in later milestones. This repository runs on GitHub Actions only.
 

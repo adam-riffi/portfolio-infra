@@ -35,6 +35,14 @@ describe("fallback pools", () => {
   test("returns an empty pool for an empty manifest", () => {
     expect(selectPool([], "fix")).toEqual([]);
   });
+
+  test("preserves every entry when the input repeats an image", () => {
+    expect(selectPool([images[0], images[2], images[0]], "fix")).toEqual([
+      images[2],
+      images[0],
+      images[0],
+    ]);
+  });
 });
 
 describe("32-bit FNV-1a", () => {
