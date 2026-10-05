@@ -63,8 +63,23 @@ export async function fetchManifest(
   const response = await request(url, { signal: AbortSignal.timeout(3000) });
   if (!response.ok)
     throw new Error(`Manifest request failed (HTTP ${response.status})`);
-  const text = await response.text();
-  if (Buffer.byteLength(text) > 1_048_576)
-    throw new Error("Manifest is too large");
-  return parseManifest(JSON.parse(text));
+  if (!response.body) throw new Error("Manifest response is empty");
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > 1_048_576) {
+        await reader.cancel();
+        throw new Error("Manifest is too large");
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  return parseManifest(JSON.parse(Buffer.concat(chunks).toString("utf8")));
 }

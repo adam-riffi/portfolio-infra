@@ -55,6 +55,7 @@ test.each([400, 404, 503])(
 
 test("rejects invalid JSON, invalid schema, excessive size and unsafe URLs", async () => {
   for (const response of [
+    new Response(null),
     new Response("not JSON"),
     Response.json({ version: 2 }),
     new Response(" ".repeat(1_048_577)),
@@ -91,7 +92,9 @@ test("cancels a streaming response as soon as it exceeds the byte ceiling", asyn
     cancel: cancelled,
   });
   const request = vi.fn<typeof fetch>().mockResolvedValue(new Response(stream));
-  await expect(fetchManifest("https://example.test/manifest.json", request)).rejects.toThrow("too large");
+  await expect(
+    fetchManifest("https://example.test/manifest.json", request),
+  ).rejects.toThrow("too large");
   expect(cancelled).toHaveBeenCalledOnce();
   expect(chunks).toBeLessThanOrEqual(4);
 });
