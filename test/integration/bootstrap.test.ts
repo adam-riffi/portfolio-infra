@@ -51,6 +51,12 @@ beforeAll(async () => {
   // Twice: the script must be safe to re-run in the SQL editor.
   await sql.file(bootstrap);
   await sql.file(bootstrap);
+  // As in the hosted project, postgres is not a superuser: it holds ADMIN on the roles it
+  // created but may not SET ROLE to them. The test session grants itself that, the bootstrap
+  // does not.
+  for (const role of ROLES) {
+    await sql.unsafe(`grant ${role} to current_user with set true, inherit false`);
+  }
 });
 
 afterAll(() => sql.end());
