@@ -4,7 +4,7 @@
 -- Expected: 54 rows (9 roles x 6 schemas); fewer means a role or schema is missing, so the
 -- bootstrap has not run. A writer (`<app>_app`) has every column true on its own schema;
 -- `dash_reader` has usage, tables_read and future_read on `dash_demo`; every other row is all
--- false, except tables_* on tables an app revoked on purpose (its migration history).
+-- false. tables_* is false where an app revoked access on purpose (its migration history).
 --   usage, create   schema privileges
 --   tables_*        over the schema's existing tables (null while it has none)
 --   future_*        default privileges for tables `postgres` (migrations) creates later
