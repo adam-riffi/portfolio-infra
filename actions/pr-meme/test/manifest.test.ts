@@ -77,3 +77,21 @@ test("propagates connection and timeout failures to the fail-open runner", async
     fetchManifest("https://example.test/manifest.json", request),
   ).rejects.toThrow("connection failed");
 });
+
+test("cancels a streaming response as soon as it exceeds the byte ceiling", async () => {
+  let chunks = 0;
+  const cancelled = vi.fn();
+  const stream = new ReadableStream({
+    pull(controller) {
+      if (chunks >= 8) return new Promise<void>(() => {});
+      chunks++;
+      controller.enqueue(new Uint8Array(524_288));
+      // No end-of-stream: the fetcher must reject without waiting for completion.
+    },
+    cancel: cancelled,
+  });
+  const request = vi.fn<typeof fetch>().mockResolvedValue(new Response(stream));
+  await expect(fetchManifest("https://example.test/manifest.json", request)).rejects.toThrow("too large");
+  expect(cancelled).toHaveBeenCalledOnce();
+  expect(chunks).toBeLessThanOrEqual(4);
+});
