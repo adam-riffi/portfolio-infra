@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m1/02-image-selection · pending
+- Done: Started the second M1 PR for category fallback, FNV-1a hashing and stable image choice.
+- Tests: Planned example and seeded property tests for deterministic choice, pool membership, nonempty fallback, reorder stability and input immutability.
+- Scope/decisions: Pure selection core only; manifest fetching and the action entry point remain M2. No design changes.
+- Next: Commit the failing tests, implement selection, run all checks and obtain independent review.
+
 ## 2026-10-05 · codex · stack/m1/01-title-parser · #5
 - Done: Verified M0 is merged with green main CI. Added a pure title parser for all ten categories, case-insensitive types, scopes and breaking markers; malformed titles fall back to general.
 - Tests: Red commit `ed5235f` fails because the parser module is absent. `pnpm check` passes 40 tests with 100% selection-core coverage using the pinned toolchain.
