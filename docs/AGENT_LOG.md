@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m2/03-runtime · pending
+- Done: Planned the Node 24 action entry point, HTTP adapter and guarded dogfood workflow.
+- Tests: Will test real main orchestration with MSW for create, re-run, pagination, no-meme, fork and API errors.
+- Scope/decisions: M2; toolkit is platform glue, core remains hand-written.
+- Next: Review and merge M2, then Drive sync.
+
 ## 2026-10-05 · codex · stack/m2/02-comments · #8
 - Done: Implemented paginated marker detection, safe comment formatting and fork/label/author skips.
 - Tests: Red 63a970d precedes implementation; full checks pass.
