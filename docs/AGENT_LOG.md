@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · claude · stack/m5/01-bootstrap · #14
+- Done: `supabase/bootstrap.sql` (idempotent): schemas and passwordless login roles for all five apps (`dash_app`/`dash_reader`, `wf_app`, `traces_app`, `rag_app`, `oauth_app`), writers with USAGE+CREATE and read-write default privileges for tables `postgres` creates, `dash_reader` read-only, schemas revoked from PUBLIC; extensions `pg_cron`, `pg_net`, `vector`. New CI `integration` job on `supabase/postgres` and `pnpm test:integration`.
+- Tests: `test/integration/bootstrap.test.ts`: runs twice; every writer creates/writes/reads in its own schema; every role (and `anon`, `authenticated`) gets `permission denied` on every other app schema; `dash_reader` reads but cannot write `dash_demo`; migration-created tables are usable. Checked locally on PGlite (no Docker); CI is authoritative.
+- Scope/decisions: Georges asked Claude to start M5 in parallel with Codex's M3/M4 (separate worktree, `stack/m5/*`), to unblock dashboard-builder's database. Migrations run as `postgres` (session pooler); app roles never get DDL outside their schema.
+- Next: stack/m5/02-check (privilege report), then stack/m5/03-project (PROJECT.md and runbook).
+
 ## 2026-10-05 · codex · stack/m3/02-drive-images · #11
 - Done: Implemented complete paginated Drive walks, safe IDs, bounded downloads and real sharp image processing.
 - Tests: Red5294f4c precedes implementation; 120 tests pass with 100% measured coverage. Real PNG/static and animated GIF fixtures cover resize, preservation, MIME and byte ceilings.
