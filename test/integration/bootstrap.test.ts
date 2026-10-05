@@ -55,7 +55,9 @@ beforeAll(async () => {
   // created but may not SET ROLE to them. The test session grants itself that, the bootstrap
   // does not.
   for (const role of ROLES) {
-    await sql.unsafe(`grant ${role} to current_user with set true, inherit false`);
+    await sql.unsafe(
+      `grant ${role} to current_user with set true, inherit false`,
+    );
   }
 });
 
