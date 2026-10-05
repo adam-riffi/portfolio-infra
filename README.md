@@ -6,8 +6,8 @@ uptime checks and repository templates.
 [![CI](https://github.com/adam-riffi/portfolio-infra/actions/workflows/ci.yml/badge.svg)](https://github.com/adam-riffi/portfolio-infra/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-M0 tooling and M1 selection are implemented. The action entry point remains empty
-until M2 integrates selection with GitHub.
+M0–M2 are implemented: tooling, deterministic selection and the fail-open Node 24
+action. Drive sync, release, database bootstrap and uptime follow.
 The [design](docs/DESIGN.md) defines subsequent milestones and architecture;
 [engineering standards](docs/ENGINEERING.md) define the delivery workflow.
 
@@ -47,8 +47,9 @@ entry point and generated bundle are excluded from coverage.
 - `templates/`: shared standards, PR template, Dependabot configuration and meme caller.
 - `.github/workflows/ci.yml`: required lint, typecheck, test, build and actionlint checks.
 
-This is one private package. M2 supplies action metadata,
-GitHub integration and dogfooding. Drive sync, database bootstrap and uptime follow
+This is one private package. The action validates events and public manifests,
+scans paginated comments for its marker and applies label, author and fork skips.
+Runs report the chosen image or skip reason in their job summary. Drive sync, database bootstrap and uptime follow
 in later milestones. This repository runs on GitHub Actions only.
 
 ## Using the templates

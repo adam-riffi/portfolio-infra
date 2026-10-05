@@ -14,6 +14,18 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m2/03-runtime · #9
+- Done: Implemented the Node 24 action, validated HTTP orchestration, fail-open outputs/summaries and guarded serialized dogfooding.
+- Tests: Red f81ad44 precedes implementation; MSW exercises posting/re-run, pages, skips and API failures. Bundle smoke verifies unsupported-event exit without dependencies.
+- Scope/decisions: M2; TypeScript DOM types are required by MSW 3. No design changes.
+- Next: Merge the reviewed M2 stack, exercise dogfood once an image exists, then Drive sync.
+
+## 2026-10-05 · codex · stack/m2/03-runtime · pending
+- Done: Planned the Node 24 action entry point, HTTP adapter and guarded dogfood workflow.
+- Tests: Will test real main orchestration with MSW for create, re-run, pagination, no-meme, fork and API errors.
+- Scope/decisions: M2; toolkit is platform glue, core remains hand-written.
+- Next: Review and merge M2, then Drive sync.
+
 ## 2026-10-05 · codex · stack/m2/02-comments · #8
 - Done: Implemented paginated marker detection, safe comment formatting and fork/label/author skips.
 - Tests: Red 63a970d precedes implementation; full checks pass.

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, test } from "vitest";
 
-test("the empty action builds and runs without credentials or runtime dependencies", () => {
+test("the action builds and skips unsupported events without credentials or dependencies", () => {
   const build = spawnSync(process.execPath, ["scripts/build.ts"], {
     encoding: "utf8",
     timeout: 10_000,
@@ -25,6 +25,7 @@ test("the empty action builds and runs without credentials or runtime dependenci
     expect(run.error).toBeUndefined();
     expect(run.status, run.stderr).toBe(0);
     expect(run.stderr).toBe("");
+    expect(run.stdout).toContain("PR meme skipped: event");
   } finally {
     rmSync(bundle, { force: true });
     rmdirSync(directory);

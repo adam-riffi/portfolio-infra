@@ -1,0 +1,26 @@
+name: PR meme
+description: Post one deterministic category-matched meme; always fail open.
+inputs:
+  github-token:
+    description: Token used to read and create PR comments
+    default: ${{ github.token }}
+  manifest-url:
+    description: Public HTTPS version-one manifest
+    default: https://raw.githubusercontent.com/adam-riffi/portfolio-infra/main/memes/manifest.json
+  skip-labels:
+    description: Comma-separated labels that skip memes
+    default: no-meme
+  skip-authors:
+    description: Comma-separated author logins that skip memes
+    default: dependabot[bot],renovate[bot]
+  width:
+    description: Rendered image width in pixels
+    default: '360'
+outputs:
+  image-id:
+    description: The chosen image ID
+  skipped-reason:
+    description: Reason no comment was posted
+runs:
+  using: node24
+  main: dist/index.js
