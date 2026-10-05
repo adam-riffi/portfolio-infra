@@ -24,6 +24,10 @@ export async function processImage(
   let height: number;
   if (metadata.format === "gif" && Number(metadata.pages) > 1) {
     if (data.length >= 5_000_000) throw new Error("Animated GIF is too large");
+    // Metadata alone can accept corrupt later frames; decode the whole animation.
+    await sharp(data, { ...options, animated: true })
+      .raw()
+      .toBuffer();
     output = data;
     extension = "gif";
     width = metadata.width;
