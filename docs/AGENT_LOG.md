@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m1/01-title-parser · #5
+- Done: Verified M0 is merged with green main CI. Added a pure title parser for all ten categories, case-insensitive types, scopes and breaking markers; malformed titles fall back to general.
+- Tests: Red commit `ed5235f` fails because the parser module is absent. `pnpm check` passes 40 tests with 100% selection-core coverage using the pinned toolchain.
+- Scope/decisions: M1 only, in two PRs: title parsing, then deterministic pool selection. No dependencies or design changes.
+- Next: Independent review and green CI for #5; complete the selection PR, then merge bottom-up.
+
 ## 2026-10-05 · codex · stack/m0/02-templates · #1, #2
 - Done: Squash-merged scaffold #1 and restacked templates #2 onto main after the user's go-ahead. The restacked tree matches the independently reviewed implementation.
 - Tests: Both original PR heads passed all five CI checks with no outstanding review findings. Rechecking the restacked #2 before its squash merge; eight tests cover the scaffold and template contracts.
