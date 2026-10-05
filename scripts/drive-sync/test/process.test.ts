@@ -18,6 +18,12 @@ test("preserves small animated GIF bytes and first-frame dimensions", async () =
     ),
   ).rejects.toThrow("too large");
 });
+
+test("rejects corrupt later GIF frames before preserving the original bytes", async () => {
+  const corrupt = Buffer.from(animatedGif);
+  corrupt[105] = 255;
+  await expect(processImage(corrupt, "image/gif")).rejects.toThrow();
+});
 test("re-encodes static GIFs", async () => {
   const source = await sharp({
     create: { width: 2, height: 2, channels: 3, background: "red" },
