@@ -10,7 +10,7 @@ export default defineConfig({
         "scripts/*/src/**/*.ts",
         "uptime/**/*.ts",
       ],
-      // M0 has only an empty entry point; there is no core to measure yet.
+      // The entry point stays empty until M2; the selection core is measured.
       exclude: ["actions/pr-meme/src/main.ts"],
       reporter: ["text", "json-summary"],
       thresholds: {

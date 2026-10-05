@@ -25,9 +25,9 @@ describe("Conventional Commit title categories", () => {
   });
 
   test("preserves descriptions with punctuation and Unicode", () => {
-    expect(parseCategory("FiX(api/client): handle café: retries (again)!")).toBe(
-      "fix",
-    );
+    expect(
+      parseCategory("FiX(api/client): handle café: retries (again)!"),
+    ).toBe("fix");
     expect(parseCategory("docs:  document the new API")).toBe("docs");
   });
 
