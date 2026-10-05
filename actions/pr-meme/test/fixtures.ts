@@ -1,6 +1,6 @@
 export const image = {
   id: "drive_id",
-  category: "fix",
+  category: "fix" as const,
   path: "memes/images/fix/drive_id.webp",
   sha256: "a".repeat(64),
   width: 800,

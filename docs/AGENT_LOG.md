@@ -14,6 +14,18 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m2/02-comments · #8
+- Done: Implemented paginated marker detection, safe comment formatting and fork/label/author skips.
+- Tests: Red 63a970d precedes implementation; full checks pass.
+- Scope/decisions: M2 only; no new dependencies.
+- Next: Review, then GitHub adapter and dogfood workflow.
+
+## 2026-10-05 · codex · stack/m2/02-comments · pending
+- Done: Planned idempotent comment creation and explicit fork, label and author skip rules.
+- Tests: Will commit failing unit tests before implementation and run the full suite.
+- Scope/decisions: M2 pure comment and skip core; no added dependencies.
+- Next: GitHub HTTP adapter and entry point follow in the third PR.
+
 ## 2026-10-05 · codex · stack/m2/01-manifest · pending
 - Done: Implemented strict manifest validation, safe image paths and bounded-time HTTPS fetching.
 - Tests: Test-first commit 60bf387; 81 tests and 100% core coverage.
