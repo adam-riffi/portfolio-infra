@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-05 · claude · stack/m5/01..03 · #14–#16 (review fixes)
+- Done: Addressed the independent review (no blockers). #14: no re-grant on existing tables (migration revokes stay; default privileges only), `vector` installed in `rag`, `wf_app` granted `net`, postgres-only guard; integration driver switched to `pg` (MIT; postgres.js is Unlicense, outside ENGINEERING.md §7). #15: `service_role` in the report, 54 rows expected. #16: extension schemas, password-in-logs warning with `psql \password` alternative, URL-safe passwords, explicit session-pooler user, changes table; recommends removing `https://*.vercel.app` and turning email sign-in off.
+- Tests: new cases first: sequences, re-run keeps a migration's revoke, rag_app uses `rag.vector`, wf_app can execute `net` functions, `service_role` locked out, bootstrap refuses non-postgres; PGlite checks for the pure-SQL parts.
+- Scope/decisions: dashboard-builder must revoke `dash_app` on `dash.__drizzle_migrations` in a migration (follow-up PR there). The `integration` job is not yet a required check (ruleset is Georges').
+- Next: CI green, mark ready; Georges merges, runs bootstrap.sql, sets passwords, fixes the redirect allowlist.
+
 ## 2026-10-05 · claude · stack/m5/03-project · #16
 - Done: `supabase/PROJECT.md`: live Auth settings (anonymous and email on, ES256 JWKS, `https://*.vercel.app` redirects), extensions (defaults; bootstrap adds pg_cron, pg_net, vector), and the phone-friendly runbook (bootstrap, passwords, check.sql, pooler connection strings per app).
 - Tests: none (documentation); settings read from `/auth/v1/settings`, the JWKS and the Supabase MCP extension list.
