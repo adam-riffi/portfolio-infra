@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-06 · codex · feat/m5-live-health · pending
+- Done: Added an invoker-safe public health RPC for uptime checks and the required private `trace-payloads` bucket configuration.
+- Tests: Red commit `ebcfe7b` precedes implementation; `pnpm check` passes 126 tests with 100% measured coverage. Local Postgres integration waits for Docker; CI runs the disposable Supabase Postgres service.
+- Scope/decisions: M5/M6 bridge; the RPC returns only `ok`, reads no app data, and has explicit `anon`/`authenticated` grants.
+- Next: Review, apply the recorded SQL to the live project, and verify REST access plus the storage bucket.
+
 ## 2026-10-06 · codex · stack/m6/02-alerts · pending
 - Done: Added bounded GitHub issue reconciliation for uptime failures and recovery, including exact markers and duplicate cleanup.
 - Tests: Red commit `4b4898b` precedes implementation; focused alert tests, full 151-test suite and `pnpm check` pass.
