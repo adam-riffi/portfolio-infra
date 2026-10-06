@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-06 · codex · stack/m6/01-checker · #17
+- Done: Added strict uptime targets and bounded, credential-safe HTTP probes.
+- Tests: Red9ec922e precedes implementation; full checks pass139 tests with100% measured coverage, including deadlines, redirects and byte limits.
+- Scope/decisions: M6; accepted ADR0004 documents environment-backed headers and initial real targets.
+- Next: Issue lifecycle reconciliation, then scheduled live checks.
+
 ## 2026-10-06 · codex · ci/release-v1 · #20
 - Done: Added the release workflow that creates a GitHub release and moves the supported `v1` action tag from `v1.*.*` tags.
 - Tests: Configuration/docs exception to red-first; `pnpm check` and actionlint pass locally.
