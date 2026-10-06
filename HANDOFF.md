@@ -13,7 +13,8 @@ This file records the state after completing the current portfolio-infra work th
 
 - The M5 migration was checked in the live project: `portfolio_health()` is invoker-safe, `STABLE`, has an empty `search_path`, is executable only by `anon` and `authenticated`, and returns `ok` as `anon`. `trace-payloads` exists and is private.
 - The final exact-head CI runs were green, including the disposable Supabase Postgres integration: [#19 CI](https://github.com/adam-riffi/portfolio-infra/actions/runs/37511402035) and [#22 CI](https://github.com/adam-riffi/portfolio-infra/actions/runs/37512770937). Each had an independent non-approving review before merge.
-- The first manual run of the production uptime workflow passed: [run 37513081666](https://github.com/adam-riffi/portfolio-infra/actions/runs/37513081666). It reported `0 opened, 0 closed`; no managed outage issues were created.
+- The first manual run of the production uptime workflow passed: [run 37513081666](https://github.com/adam-riffi/portfolio-infra/actions/runs/37513081666). It reported `0 opened, 0 closed`.
+- A controlled lifecycle test passed end to end: [run 37513871140](https://github.com/adam-riffi/portfolio-infra/actions/runs/37513871140) used a temporary invalid public key and opened exactly one managed issue ([#24](https://github.com/adam-riffi/portfolio-infra/issues/24)); after the configured key was restored, [run 37514011635](https://github.com/adam-riffi/portfolio-infra/actions/runs/37514011635) closed that same issue. No managed outage issue remains open.
 - The M6 scheduler branch passed `pnpm check`: 156 tests, lint, typecheck, build freshness, and actionlint. The checker and alerts slices also passed their full CI before merge.
 - The post-migration Supabase advisor output contains only pre-existing findings in `dash`, `dash_demo`, `cron`, and Auth; it reports no finding for the new health RPC or storage bucket.
 
@@ -24,13 +25,11 @@ This file records the state after completing the current portfolio-infra work th
 3. Decide whether to address the unrelated Supabase advisor warnings for `dash`, `dash_demo`, `cron`, and leaked-password protection in their owning projects.
 
 ## Remaining test work
-
-- Exercise the M6 failure/recovery path against a controlled temporary target or endpoint: verify it opens exactly one marked issue on failure and closes that same issue after recovery. The behavior is covered by unit tests, while the completed live run verified the healthy path.
 - Run the configured Drive workflow using the real federated identity once the external Google Cloud setup exists; do not add or expose a long-lived key merely to make this test pass.
 - Re-run the shared Supabase operational checks after the outstanding Auth/OAuth settings are configured.
 
 ## Operational notes
 
-- The uptime workflow runs every six hours and on manual dispatch, only for `adam-riffi/portfolio-infra` on `main`. It uses a repository variable for the Supabase publishable key and never stores that value in `uptime/targets.json`, issues, or logs.
+- The uptime workflow runs every six hours and on manual dispatch, only for `adam-riffi/portfolio-infra` on `main`. It uses a repository variable for the Supabase publishable key and never stores that value in `uptime/targets.json` or issues. GitHub Actions can display repository-variable values in step environment logs, so the key is public configuration rather than an authorization secret.
 - The live endpoints currently monitored are the Gacha Hub homepage and `public.portfolio_health()` through Supabase REST.
 - Keep PR work stacked on the current `main`; all completed M5/M6 PRs were squash-merged.
