@@ -18,7 +18,7 @@ Entry format:
 - Done: Recorded the completed M3–M6 work, production checks, remaining external configuration, and live test follow-ups in `HANDOFF.md`.
 - Tests: Documentation-only change; `pnpm check` passes (156 tests, lint, typecheck, build freshness, actionlint).
 - Scope/decisions: No implementation or configuration changes; credentials remain outside the repository.
-- Next: Review and merge the handoff, then use it as the starting point for the remaining Drive, Auth, and controlled alert-lifecycle work.
+- Next: Review and merge the handoff, then use it as the starting point for the remaining Drive and Auth configuration work.
 
 ## 2026-10-06 · codex · stack/m6/03-schedule · pending
 - Done: Added the committed live targets, safe scheduled runner, and main-only six-hour workflow that reconciles uptime alerts.
