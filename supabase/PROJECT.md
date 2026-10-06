@@ -9,17 +9,18 @@ The shared database for every database-backed portfolio app (ENGINEERING.md §11
 | API URL | `https://fztysvgkmauozxfyscaj.supabase.co` |
 | Created | 2026-10-04 |
 
-## Auth (checked 2026-10-05)
+## Auth (checked 2026-10-06)
 
 Auth settings apply to every app in the project, so apps authorize through their own tables, never on "the user is signed in" (DESIGN.md §8).
 
 | Setting | Value | Used by |
 | --- | --- | --- |
 | Anonymous sign-ins | On | dashboard-builder |
-| Email sign-in | On (default), confirmation required. **To turn off**: no app uses it, and it is the way in for redirect abuse | — |
+| Email sign-in | Off. No app uses it, and it was the way in for redirect abuse | — |
+| Leaked-password protection | Off. Moot while no password sign-in is enabled; turn it on if email sign-in returns | — |
 | GitHub provider | Off; turn on with agent-trace-viewer | agent-trace-viewer |
 | JWT signing | Asymmetric ES256, published at `/auth/v1/.well-known/jwks.json` | every app verifies tokens through the JWKS |
-| Redirect URLs | `https://*.vercel.app`. **To remove**: it accepts any Vercel deployment, including someone else's, as a sign-in redirect target. Anonymous sign-in needs no redirect; add each app's exact production domain when an app adds email or OAuth sign-in | — |
+| Redirect URLs | None. Anonymous sign-in needs no redirect. Add each app's exact production and preview domains when it adds email or OAuth sign-in; never a wildcard such as `https://*.vercel.app`, which accepts anyone's Vercel deployment | — |
 
 ## Extensions
 
@@ -82,3 +83,5 @@ payloads.
 | --- | --- | --- | --- |
 | 2026-10-05 | Auth: anonymous sign-ins | Turned on | dashboard-builder visitors sign in anonymously |
 | 2026-10-05 | Auth: redirect URLs | Added `https://*.vercel.app` (to be removed, see Auth) | dashboard-builder previews |
+| 2026-10-06 | Auth: email sign-in | Turned off | No app uses it; it was the way in for redirect abuse |
+| 2026-10-06 | Auth: redirect URLs | Removed `https://*.vercel.app` | It accepted any Vercel deployment; anonymous sign-in needs no redirect |
