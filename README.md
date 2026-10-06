@@ -6,14 +6,12 @@ uptime checks and repository templates.
 [![CI](https://github.com/adam-riffi/portfolio-infra/actions/workflows/ci.yml/badge.svg)](https://github.com/adam-riffi/portfolio-infra/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-M0–M3 are implemented: tooling, deterministic selection, the fail-open Node 24
-action, and checksum-verified Drive sync. The release workflow publishes a stable
-`v1` action tag from each `v1.*.*` release; database bootstrap and uptime checks
-are documented in [the design](docs/DESIGN.md).
-Drive synchronization now runs daily or on demand; configure it using
-[the setup guide](scripts/drive-sync/README.md). Missing cloud configuration is
-reported as a workflow failure, and dry runs make no writes.
-The [design](docs/DESIGN.md) defines subsequent milestones and architecture;
+M0–M6 are implemented: tooling, deterministic selection, the fail-open Node 24
+action, the committed meme pool, the `v1` release, the shared database bootstrap
+and uptime checks. The release workflow publishes a stable `v1` action tag from
+each `v1.*.*` release. The meme pool is a fixed set of 90 images in `memes/`; the
+original Google Drive sync was removed ([ADR 0005](docs/adr/0005-remove-drive-sync.md)).
+The [design](docs/DESIGN.md) defines the architecture;
 [engineering standards](docs/ENGINEERING.md) define the delivery workflow.
 
 ## Uptime
@@ -33,8 +31,9 @@ malformed titles use `general`.
 
 Selection prefers the matching category, then `general`, then all images. It sorts
 the pool by image ID and uses the unsigned FNV-1a hash of `repository#PR number`
-modulo the pool size. Reordering a manifest with unique Drive IDs preserves the
+modulo the pool size. Reordering a manifest with unique image IDs preserves the
 choice, and selection leaves the input untouched. An empty manifest returns no image.
+To add an image, follow the manifest notes in [DESIGN.md §7](docs/DESIGN.md#7-interfaces).
 
 ## Running locally
 
@@ -63,9 +62,8 @@ entry point and generated bundle are excluded from coverage.
 
 This is one private package. The action validates events and public manifests,
 scans paginated comments for its marker and applies label, author and fork skips.
-Runs report the chosen image or skip reason in their job summary. Drive sync uses
-short-lived credentials and only publishes generated assets after a successful
-complete listing. This repository runs on GitHub Actions only.
+Runs report the chosen image or skip reason in their job summary. This repository
+runs on GitHub Actions only.
 
 ## Using the templates
 

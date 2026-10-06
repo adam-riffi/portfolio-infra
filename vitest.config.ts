@@ -7,11 +7,7 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, "test/integration/**"],
     coverage: {
       provider: "v8",
-      include: [
-        "actions/*/src/**/*.ts",
-        "scripts/*/src/**/*.ts",
-        "uptime/**/*.ts",
-      ],
+      include: ["actions/*/src/**/*.ts", "uptime/**/*.ts"],
       // The runner entry point is platform glue; run.ts and all core are measured.
       exclude: ["actions/pr-meme/src/main.ts"],
       reporter: ["text", "json-summary"],
@@ -21,13 +17,6 @@ export default defineConfig({
         functions: 80,
         statements: 80,
         "actions/pr-meme/src/{select,comment,manifest}.ts": {
-          lines: 95,
-          branches: 95,
-          functions: 95,
-          statements: 95,
-          perFile: true,
-        },
-        "scripts/drive-sync/src/**": {
           lines: 95,
           branches: 95,
           functions: 95,

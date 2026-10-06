@@ -22,10 +22,6 @@ export const imageSchema = z
     width: z.int().positive(),
     height: z.int().positive(),
     bytes: z.int().positive(),
-    driveMd5: z
-      .string()
-      .regex(/^[a-f0-9]{32}$/)
-      .optional(),
   })
   .refine(
     (image) =>
@@ -34,7 +30,7 @@ export const imageSchema = z
           image.path ===
           `memes/images/${image.category}/${image.id}.${extension}`,
       ),
-    { message: "Image path must match its category and Drive ID" },
+    { message: "Image path must match its category and ID" },
   );
 
 const manifestSchema = z
