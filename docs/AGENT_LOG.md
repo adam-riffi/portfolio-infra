@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-06 · codex · ci/release-v1 · pending
+- Done: Added the release workflow that creates a GitHub release and moves the supported `v1` action tag from `v1.*.*` tags.
+- Tests: Configuration/docs exception to red-first; `pnpm check` and actionlint pass locally.
+- Scope/decisions: M4; only this repository can move the tag, and reruns do not duplicate the GitHub release.
+- Next: Review and merge, tag `v1.0.0`, then verify callers in two project repositories.
+
 ## 2026-10-06 · codex · chore/initial-drive-import · #18
 - Done: Imported 90 recursively listed Google Drive images from the mounted My Drive/PR folder through the production sync algorithm; every output uses the actual Drive ID and verified source checksum.
 - Tests: Dry run reported 90 downloads; the import completed with zero warnings; a second actual run reported changed=false, downloads=0; pnpm check passes.
