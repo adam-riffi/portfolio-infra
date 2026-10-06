@@ -11,10 +11,10 @@ Operating manual for coding agents in this repository. Codex and Copilot read th
 
 ## Project at a glance
 
-- **What:** Shared automation for all portfolio repositories: the PR meme pipeline (Google Drive images posted on every PR), the shared Supabase bootstrap script, uptime checks and templates.
+- **What:** Shared automation for all portfolio repositories: the PR meme pipeline (committed images posted on every PR), the shared Supabase bootstrap script, uptime checks and templates.
 - **Stack:** TypeScript (Node) action and scripts, pnpm, Biome, Vitest, esbuild
 - **Hosting:** GitHub Actions only (no Vercel project)
-- **Hand-written core:** pr-meme selection, comment idempotency, skip rules, Drive sync diffing. Full list and allowed libraries: `docs/DESIGN.md` §6.
+- **Hand-written core:** pr-meme selection, comment idempotency, skip rules. Full list and allowed libraries: `docs/DESIGN.md` §6.
 - **Repository layout:** `docs/DESIGN.md` §5.
 
 ## Commands
@@ -30,7 +30,6 @@ Operating manual for coding agents in this repository. Codex and Copilot read th
 | Bundle the action (commit `actions/pr-meme/dist`) | `pnpm build` |
 | Build and check committed bundle freshness | `pnpm build:check` |
 | Lint workflows and caller template (requires actionlint on PATH) | `pnpm lint:workflows` |
-| Drive sync / dry run | `pnpm sync` / `pnpm sync --dry-run` |
 | Check all | `pnpm check` |
 
 Keep this table accurate: when you add or change a script, update the table in the same PR. Install the pinned Node and pnpm versions and actionlint 1.7.12 before running the checks; see README.md.

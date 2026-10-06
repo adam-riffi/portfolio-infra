@@ -1,6 +1,6 @@
 # 0001 — Preserve upstream Drive checksums
 
-- Status: Proposed
+- Status: Superseded by 0005
 - Date: 2026-10-05
 - Proposed by: codex; decided by: Georges
 
