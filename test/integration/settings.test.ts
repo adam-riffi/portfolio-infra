@@ -19,10 +19,7 @@ beforeAll(async () => {
   await client.connect();
   // Make this file independently runnable; bootstrap itself is idempotent.
   await client.query(bootstrap);
-  // The local image's postgres is intentionally non-superuser. This local-only
-  // fixture lets it exercise Storage's actual owner privileges; it grants
-  // nothing in the hosted project.
-  for (const role of ["anon", "authenticated", "supabase_storage_admin"])
+  for (const role of ["anon", "authenticated"])
     await client.query(
       `grant ${role} to current_user with set true, inherit false`,
     );
@@ -31,16 +28,6 @@ beforeAll(async () => {
 });
 
 afterAll(() => client.end());
-
-async function asStorageAdmin<T>(run: () => Promise<T>): Promise<T> {
-  await client.query("begin");
-  try {
-    await client.query("set local role supabase_storage_admin");
-    return await run();
-  } finally {
-    await client.query("rollback");
-  }
-}
 
 describe("shared project settings", () => {
   it.each(["anon", "authenticated"])(
@@ -84,18 +71,34 @@ describe("shared project settings", () => {
   });
 
   it("creates one private trace bucket and restores privacy on re-run", async () => {
-    const rows = await asStorageAdmin(async () => {
-      await client.query(storage);
-      await client.query(`update storage.buckets set public = true
+    await client.query("begin");
+    try {
+      // The CI image correctly reserves storage's managed owner role. Exercise
+      // the exact upsert in a transaction-scoped schema owned by local postgres.
+      expect(storage).toContain(
+        "insert into storage.buckets (id, name, public)",
+      );
+      await client.query("create schema settings_fixture");
+      await client.query(`create table settings_fixture.buckets (
+        id text primary key,
+        name text not null,
+        public boolean not null default false
+      )`);
+      const fixture = storage.replaceAll(
+        "storage.buckets",
+        "settings_fixture.buckets",
+      );
+      await client.query(fixture);
+      await client.query(`update settings_fixture.buckets set public = true
         where id = 'trace-payloads'`);
-      await client.query(storage);
-      return (
-        await client.query(`select id, name, public
-        from storage.buckets where id = 'trace-payloads'`)
-      ).rows;
-    });
-    expect(rows).toEqual([
-      { id: "trace-payloads", name: "trace-payloads", public: false },
-    ]);
+      await client.query(fixture);
+      const { rows } = await client.query(`select id, name, public
+        from settings_fixture.buckets where id = 'trace-payloads'`);
+      expect(rows).toEqual([
+        { id: "trace-payloads", name: "trace-payloads", public: false },
+      ]);
+    } finally {
+      await client.query("rollback");
+    }
   });
 });
