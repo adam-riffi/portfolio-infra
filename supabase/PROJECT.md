@@ -62,6 +62,20 @@ Everything happens in the Supabase dashboard; it works from a phone browser too.
 
 Add a row per app as each one comes online.
 
+## Shared operational endpoints
+
+[`health.sql`](health.sql) defines `public.portfolio_health()`: a stable,
+security-invoker function that returns only `ok` and does not read application
+data. It revokes the default `PUBLIC` execute permission and grants only `anon`
+and `authenticated`, so the uptime job can call
+`GET /rest/v1/rpc/portfolio_health` with the publishable key without a database
+password. Re-run it after restoring the project or replacing PostgREST.
+
+[`storage.sql`](storage.sql) creates `trace-payloads` as a private bucket and
+restores its privacy if it is re-run. It deliberately creates no Storage policies:
+agent-trace-viewer owns those policies in its own migrations before it uploads
+payloads.
+
 ## Changes
 
 | Date | Setting | Change | Reason |
