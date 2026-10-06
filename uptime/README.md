@@ -11,4 +11,4 @@ response bodies never belong in reports. See [ADR0004](../docs/adr/0004-initial-
 
 Each probe has a ten-second timeout, rejects redirects and stops reading after
 one MiB. Failures report only a status code or a fixed diagnostic, without raw
-remote errors. The scheduled runner and issue lifecycle are delivered next.
+remote errors. The scheduled runner and live targets are delivered next.
