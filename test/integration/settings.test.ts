@@ -19,7 +19,10 @@ beforeAll(async () => {
   await client.connect();
   // Make this file independently runnable; bootstrap itself is idempotent.
   await client.query(bootstrap);
-  for (const role of ["anon", "authenticated"])
+  // The local image's postgres is intentionally non-superuser. This local-only
+  // fixture lets it exercise Storage's actual owner privileges; it grants
+  // nothing in the hosted project.
+  for (const role of ["anon", "authenticated", "supabase_storage_admin"])
     await client.query(
       `grant ${role} to current_user with set true, inherit false`,
     );
@@ -61,17 +64,21 @@ describe("shared project settings", () => {
   );
 
   it("keeps the health function invoker-safe with a fixed search path", async () => {
-    const { rows } =
-      await client.query(`select prosecdef, provolatile, proconfig,
-      exists (select from aclexplode(proacl) a
-        where a.grantee = 0 and a.privilege_type = 'EXECUTE') as public_execute
-      from pg_proc where oid = 'public.portfolio_health()'::regprocedure`);
+    const { rows } = await client.query(`select p.prosecdef, p.provolatile,
+      p.proconfig, coalesce(array_agg(r.rolname order by r.rolname)
+        filter (where a.privilege_type = 'EXECUTE'), '{}'::text[])
+        as execute_grantees
+      from pg_proc p
+      left join lateral aclexplode(p.proacl) a on true
+      left join pg_roles r on r.oid = a.grantee
+      where p.oid = 'public.portfolio_health()'::regprocedure
+      group by p.oid`);
     expect(rows).toEqual([
       {
         prosecdef: false,
         provolatile: "s",
         proconfig: ['search_path=""'],
-        public_execute: false,
+        execute_grantees: ["anon", "authenticated"],
       },
     ]);
   });
