@@ -14,6 +14,18 @@ Entry format:
 
 ---
 
+## 2026-10-06 · codex · stack/m3/04-workflow · #13
+- Done: Restacked sync on merged M5 work; independent review found and fixed missing IAM Credentials API and fallback token-creator setup.
+- Tests: 126 tests, full local check and actionlint pass; no live import until repository Drive configuration exists.
+- Scope/decisions: M3; token-creator binding is scoped to the fallback service account itself.
+- Next: Merge reviewed M3 stack, release v1, finish uptime and live verification.
+
+## 2026-10-05 · codex · stack/m3/04-workflow · pending
+- Done: Planned daily/manual sync with WIF by default, key fallback and no-op-only commit behavior.
+- Tests: Workflow validation and complete project checks; cloud import waits on folder/auth configuration.
+- Scope/decisions: M3; generated-asset publication is the specified bot job; implementation changes stay in reviewed PRs.
+- Next: Release and live dogfood checks follow.
+
 ## 2026-10-05 · codex · stack/m3/03-sync · #12
 - Done: Implemented checksum-verified prepare/write sync, preserving last valid images on bad updates, removing obsolete paths and providing a no-download dry run.
 - Tests: Red815fac1 precedes implementation; 126 tests pass with100% measured source; real filesystem imports are unchanged on second run.

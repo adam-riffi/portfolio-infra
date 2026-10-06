@@ -8,6 +8,9 @@ uptime checks and repository templates.
 
 M0–M2 are implemented: tooling, deterministic selection and the fail-open Node 24
 action. Drive sync, release, database bootstrap and uptime follow.
+Drive synchronization now runs daily or on demand; configure it using
+[the setup guide](scripts/drive-sync/README.md). Missing cloud configuration is
+reported as a workflow failure, and dry runs make no writes.
 The [design](docs/DESIGN.md) defines subsequent milestones and architecture;
 [engineering standards](docs/ENGINEERING.md) define the delivery workflow.
 
