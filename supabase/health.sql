@@ -9,6 +9,7 @@ security invoker
 set search_path = ''
 as $$ select 'ok'::text from (select 1) as probe $$;
 
-revoke all on function public.portfolio_health() from public;
+revoke all on function public.portfolio_health()
+  from public, postgres, service_role;
 grant execute on function public.portfolio_health() to anon, authenticated;
 notify pgrst, 'reload schema';

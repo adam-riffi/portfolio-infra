@@ -52,7 +52,7 @@ describe("shared project settings", () => {
 
   it("keeps the health function invoker-safe with a fixed search path", async () => {
     const { rows } = await client.query(`select p.prosecdef, p.provolatile,
-      p.proconfig, coalesce(array_agg(r.rolname order by r.rolname)
+      p.proconfig, coalesce(array_agg(r.rolname::text order by r.rolname)
         filter (where a.privilege_type = 'EXECUTE'), '{}'::text[])
         as execute_grantees
       from pg_proc p
