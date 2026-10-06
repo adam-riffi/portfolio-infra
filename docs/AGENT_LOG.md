@@ -15,8 +15,8 @@ Entry format:
 ---
 
 ## 2026-10-06 · claude · refactor/remove-drive-sync · pending
-- Done: Removed the Google Drive sync (script, workflow, `pnpm sync`, `sharp`, optional `driveMd5`); the 90 committed images are now the fixed meme pool. Merged Dependabot #3 and #4.
-- Tests: Deletion only, no new behavior; existing manifest and bundle tests still pass on the edited manifest, and `pnpm check` passes.
+- Done: Removed the Google Drive sync (script, workflow, `pnpm sync`, `sharp`, optional `driveMd5`); the 90 committed images are now the fixed meme pool. Merged Dependabot #3 and #4; deleted the `GDRIVE_FOLDER_ID` variable.
+- Tests: New `test/memes.test.ts` guards the hand-edited manifest (sizes, SHA-256, no orphan files), since a bad manifest makes every caller skip silently; `pnpm check` passes.
 - Scope/decisions: Drive removal decided by Georges, recorded in [ADR 0005](adr/0005-remove-drive-sync.md), which supersedes ADR 0001.
 - Next: Supabase Auth redirect domains and OAuth credentials once available (see HANDOFF.md).
 

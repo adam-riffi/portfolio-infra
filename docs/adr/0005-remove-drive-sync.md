@@ -21,7 +21,7 @@ script, the `sharp` dependency, the Drive repository variables and the optional
 
 Finishing the federation setup keeps automatic imports but adds a cloud project to
 maintain for a folder that rarely changes. A long-lived service-account key was
-already rejected as a default (DESIGN.md §6).
+already rejected as a default.
 
 ## Consequences
 

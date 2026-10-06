@@ -79,7 +79,7 @@ portfolio-infra/
 
 **Image hosting.** Images are committed under `memes/images/<category>/` and referenced through `https://raw.githubusercontent.com/adam-riffi/portfolio-infra/main/memes/images/...`. GitHub proxies images in comments, so they render in public and private repositories alike. Consequence: every committed image is public. Keep only images you are happy to publish.
 
-**Categories.** Folders under `memes/images/` named after Conventional Commit types (`feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `chore`, `ci`, `build`, `revert`) are categories; everything else is `general`.
+**Categories.** Folders under `memes/images/` named after Conventional Commit types (`feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `chore`, `ci`, `build`, `revert`) are categories, and `memes/images/general/` holds the rest; the manifest accepts no other folder.
 
 **Selection algorithm** (pure function in `select.ts`):
 1. Parse the PR title's Conventional Commit type (case-insensitive, optional scope and `!`).
@@ -125,7 +125,7 @@ Outputs: `image-id`, `skipped-reason`.
 
 **Caller workflow:** exactly the snippet in ENGINEERING.md §14, also stored as `templates/pr-meme.yml`.
 
-To add an image, commit a WebP or GIF (longest side at most 800 px) at its `path` and add its entry; `sha256`, `width`, `height` and `bytes` describe the committed file. IDs match `[A-Za-z0-9_-]+`.
+To add an image, commit a WebP or GIF (longest side at most 800 px) at its `path` and add its entry; `sha256`, `width`, `height` and `bytes` describe the committed file. IDs match `[A-Za-z0-9_-]+`. `test/memes.test.ts` checks every entry against its file and fails on files missing from the manifest.
 
 **Uptime targets** (`uptime/targets.json`): `[{ "name": "dashboard-builder", "url": "https://…/api/health", "expect": { "status": 200, "bodyIncludes": "ok" } }]`. Targets use HTTPS and exclude credentials, query strings and fragments. Optional `headersFromEnv` maps `apikey`, `authorization` or `x-*` header names to uppercase repository-variable names; values are resolved only at runtime and never appear in target JSON, URLs, issue bodies or job summaries. See [ADR 0004](adr/0004-initial-uptime-targets.md).
 
