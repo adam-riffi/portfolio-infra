@@ -11,4 +11,11 @@ response bodies never belong in reports. See [ADR0004](../docs/adr/0004-initial-
 
 Each probe has a ten-second timeout, rejects redirects and stops reading after
 one MiB. Failures report only a status code or a fixed diagnostic, without raw
-remote errors. The scheduled runner and live targets are delivered next.
+remote errors.
+
+`main.ts` reads the committed `targets.json`, validates every target and resolves
+every required header before sending a probe. It then uses the GitHub Actions
+`GITHUB_TOKEN` to reconcile the corresponding managed alert issues. The workflow
+runs on `main` every six hours and can be dispatched manually. Its database key is
+the public repository variable `SUPABASE_PUBLISHABLE_KEY`; values never belong in
+the target file, issue bodies, or runner output.

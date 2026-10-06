@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-06 · codex · stack/m6/03-schedule · pending
+- Done: Added the committed live targets, safe scheduled runner, and main-only six-hour workflow that reconciles uptime alerts.
+- Tests: Red commit `8ab2459` precedes implementation; focused runner/config tests and `pnpm check` pass (156 tests, actionlint, 96.31% lines).
+- Scope/decisions: M6 only; all required headers resolve before probes, and the public Supabase key remains a repository-variable reference.
+- Next: Independent review and merge, then set `SUPABASE_PUBLISHABLE_KEY` and run the workflow after the health RPC migration is live.
+
 ## 2026-10-06 · codex · feat/m5-live-health · #19
 - Done: Added an invoker-safe public health RPC for uptime checks and the required private `trace-payloads` bucket configuration.
 - Tests: Red commit `ebcfe7b` precedes implementation; `pnpm check` passes 126 tests with 100% measured coverage. Local Postgres integration waits for Docker; CI runs the disposable Supabase Postgres service.
