@@ -14,6 +14,18 @@ Entry format:
 
 ---
 
+## 2026-10-05 · codex · stack/m3/03-sync · #12
+- Done: Implemented checksum-verified prepare/write sync, preserving last valid images on bad updates, removing obsolete paths and providing a no-download dry run.
+- Tests: Red815fac1 precedes implementation; 126 tests pass with100% measured source; real filesystem imports are unchanged on second run.
+- Scope/decisions: M3 only; CLI reads access tokens from environment, never logs values.
+- Next: Review, then scheduled/manual WIF workflow and live import when credentials exist.
+
+## 2026-10-05 · codex · stack/m3/03-sync · pending
+- Done: Planned filesystem sync with complete-listing protection, source checksum verification and dry runs.
+- Tests: Will test actual image bytes and temporary repository trees for import, no-op, move, removal and failures.
+- Scope/decisions: M3; source downloads prepare before publication; Git commit publishes the complete result.
+- Next: Add the WIF workflow and operating instructions in the next PR.
+
 ## 2026-10-05 · claude · stack/m5/01..03 · #14–#16 (review fixes)
 - Done: Addressed the independent review (no blockers). #14: no re-grant on existing tables (migration revokes stay; default privileges only), `vector` installed in `rag`, `wf_app` granted `net`, postgres-only guard; integration driver switched to `pg` (MIT; postgres.js is Unlicense, outside ENGINEERING.md §7). #15: `service_role` in the report, 54 rows expected. #16: extension schemas, password-in-logs warning with `psql \password` alternative, URL-safe passwords, explicit session-pooler user, changes table; recommends removing `https://*.vercel.app` and turning email sign-in off.
 - Tests: new cases first: sequences, re-run keeps a migration's revoke, rag_app uses `rag.vector`, wf_app can execute `net` functions, `service_role` locked out, bootstrap refuses non-postgres; PGlite checks for the pure-SQL parts.

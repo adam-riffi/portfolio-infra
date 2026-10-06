@@ -9,14 +9,14 @@ export interface DriveFile {
 }
 
 /** Compare upstream checksums and category paths, never user-supplied filenames. */
-export function diffFiles(
+export function diffFiles<T extends DriveFile>(
   previous: readonly Image[],
-  current: readonly DriveFile[],
-): { download: DriveFile[]; keep: Image[]; remove: Image[] } {
+  current: readonly T[],
+): { download: T[]; keep: Image[]; remove: Image[] } {
   if (new Set(current.map((file) => file.id)).size !== current.length)
     throw new Error("duplicate Drive IDs");
   const byId = new Map(previous.map((image) => [image.id, image]));
-  const download: DriveFile[] = [];
+  const download: T[] = [];
   const keep: Image[] = [];
   for (const file of current) {
     const image = byId.get(file.id);
