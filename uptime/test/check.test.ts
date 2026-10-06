@@ -10,6 +10,7 @@ const target = {
 test("validates targets and resolves credentials separately", () => {
   expect(parseTargets([target])).toEqual([target]);
   const secured = { ...target, headersFromEnv: { apikey: "PUBLIC_KEY" } };
+  expect(parseTargets([secured])).toEqual([secured]);
   expect(requestHeaders(secured, { PUBLIC_KEY: "key" })).toEqual({
     apikey: "key",
   });
@@ -29,6 +30,8 @@ test.each(
     [{ ...target, url: "http://example.test" }],
     [{ ...target, url: "https://user:secret@example.test" }],
     [{ ...target, url: "https://example.test?token=secret" }],
+    [{ ...target, url: "https://example.test?" }],
+    [{ ...target, url: "https://example.test#" }],
     [{ ...target, expect: { status: 0, bodyIncludes: "ok" } }],
     [{ ...target, expect: { status: 200, bodyIncludes: "" } }],
     [{ ...target, headersFromEnv: { apikey: "literal-key" } }],
