@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-06 · claude · docs/readme-meme-screenshot · pending
+- Done: README shows a real pr-meme bot comment (gacha-hub #80); DESIGN.md §15 item checked.
+- Tests: Documentation only.
+- Scope/decisions: None.
+- Next: v1.1 no-repeat images and standards sync (STANDARDS_SYNC_TOKEN secret is set); merge kanri#21, wuxing#6, dashboard-builder#30 when green.
+
 ## 2026-10-06 · claude · docs/supabase-auth-settings · pending
 - Done: Recorded that email sign-in is off and the `https://*.vercel.app` redirect wildcard is gone (changed by Georges in the dashboard).
 - Tests: Documentation only. The live `/auth/v1/settings` shows only anonymous sign-in enabled. The security advisor shows the same four warnings as before, with nothing new.

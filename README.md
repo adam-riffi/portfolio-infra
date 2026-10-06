@@ -25,6 +25,8 @@ The RPC's public key is supplied only at runtime through the
 
 ## Meme selection
 
+![A pr-meme bot comment on gacha-hub PR #80](docs/images/pr-meme-comment.png)
+
 The pure core in `actions/pr-meme/src/select.ts` parses Conventional Commit titles
 case-insensitively, including scopes and breaking-change markers. Unknown or
 malformed titles use `general`.
