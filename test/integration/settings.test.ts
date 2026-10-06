@@ -23,17 +23,21 @@ beforeAll(async () => {
     await client.query(
       `grant ${role} to current_user with set true, inherit false`,
     );
-  // The Postgres-only service has no Storage API migrations. These are the three
-  // documented bucket fields this configuration touches; hosted Storage owns the rest.
-  await client.query("create schema if not exists storage");
-  await client.query(`create table if not exists storage.buckets (
-    id text primary key, name text not null, public boolean not null default false
-  )`);
   await client.query(health);
   await client.query(health);
 });
 
 afterAll(() => client.end());
+
+async function asStorageAdmin<T>(run: () => Promise<T>): Promise<T> {
+  await client.query("begin");
+  try {
+    await client.query("set local role supabase_storage_admin");
+    return await run();
+  } finally {
+    await client.query("rollback");
+  }
+}
 
 describe("shared project settings", () => {
   it.each(["anon", "authenticated"])(
@@ -73,19 +77,18 @@ describe("shared project settings", () => {
   });
 
   it("creates one private trace bucket and restores privacy on re-run", async () => {
-    await client.query("begin");
-    try {
+    const rows = await asStorageAdmin(async () => {
       await client.query(storage);
       await client.query(`update storage.buckets set public = true
         where id = 'trace-payloads'`);
       await client.query(storage);
-      const { rows } = await client.query(`select id, name, public
-        from storage.buckets where id = 'trace-payloads'`);
-      expect(rows).toEqual([
-        { id: "trace-payloads", name: "trace-payloads", public: false },
-      ]);
-    } finally {
-      await client.query("rollback");
-    }
+      return (
+        await client.query(`select id, name, public
+        from storage.buckets where id = 'trace-payloads'`)
+      ).rows;
+    });
+    expect(rows).toEqual([
+      { id: "trace-payloads", name: "trace-payloads", public: false },
+    ]);
   });
 });
