@@ -2,7 +2,8 @@
 
 Images under `My Drive/PR` become public files in this repository. Share only that
 folder with a service account as Viewer. Give the service account no project roles.
-Enable the Drive API in its Google Cloud project.
+Enable the Drive API and IAM Service Account Credentials API in its Google Cloud
+project.
 
 ## Keyless setup
 
@@ -19,9 +20,12 @@ resource name), and `GCP_SERVICE_ACCOUNT` (email). Run `drive-sync` manually wit
 `dry-run` first, then normally. A second unchanged run should report `no changes`
 and make no commit. Runs execute only on this repository's main branch.
 
-If WIF is not ready, securely set `GDRIVE_SA_KEY` to a service-account JSON key
-and leave `GCP_WIF_PROVIDER` unset. This is a fallback; remove the key after WIF
-works. Never paste tokens or keys into logs, shell history or committed files.
+If WIF is not ready, grant the service account `roles/iam.serviceAccountTokenCreator`
+on itself (not on the project), securely set `GDRIVE_SA_KEY` to its JSON key, and
+leave `GCP_WIF_PROVIDER` unset. The auth action needs this binding to mint the
+Drive access token from a key; see its [service-account-key setup](https://github.com/google-github-actions/auth#setup).
+This is a fallback; remove the key and self-binding after WIF works. Never paste
+tokens or keys into logs, shell history or committed files.
 
 ## Local operation
 
