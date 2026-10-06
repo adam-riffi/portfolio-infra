@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-06 · codex · stack/m6/01-checker · pending
+- Done: Planned strict uptime targets and bounded, credential-safe HTTP probes.
+- Tests: Test-first coverage will exercise response status/body, deadlines, redirects, byte limits and malformed configuration.
+- Scope/decisions: M6; optional environment-backed headers support the shared database health endpoint (proposed ADR follows with deployment).
+- Next: Issue lifecycle reconciliation, then scheduled live checks.
+
 ## 2026-10-06 · codex · ci/release-v1 · #20
 - Done: Added the release workflow that creates a GitHub release and moves the supported `v1` action tag from `v1.*.*` tags.
 - Tests: Configuration/docs exception to red-first; `pnpm check` and actionlint pass locally.
