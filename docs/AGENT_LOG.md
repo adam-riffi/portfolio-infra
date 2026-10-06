@@ -14,7 +14,7 @@ Entry format:
 
 ---
 
-## 2026-10-06 · codex · ci/release-v1 · pending
+## 2026-10-06 · codex · ci/release-v1 · #20
 - Done: Added the release workflow that creates a GitHub release and moves the supported `v1` action tag from `v1.*.*` tags.
 - Tests: Configuration/docs exception to red-first; `pnpm check` and actionlint pass locally.
 - Scope/decisions: M4; only this repository can move the tag, and reruns do not duplicate the GitHub release.
