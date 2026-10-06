@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-06 · claude · docs/supabase-auth-settings · pending
+- Done: Recorded that email sign-in is off and the `https://*.vercel.app` redirect wildcard is gone (changed by Georges in the dashboard).
+- Tests: Documentation only. The live `/auth/v1/settings` shows only anonymous sign-in enabled. The security advisor shows the same four warnings as before, with nothing new.
+- Scope/decisions: None.
+- Next: GitHub provider and exact redirect domains when agent-trace-viewer exists.
+
 ## 2026-10-06 · claude · refactor/remove-drive-sync · pending
 - Done: Removed the Google Drive sync (script, workflow, `pnpm sync`, `sharp`, optional `driveMd5`); the 90 committed images are now the fixed meme pool. Merged Dependabot #3 and #4; deleted the `GDRIVE_FOLDER_ID` variable.
 - Tests: New `test/memes.test.ts` guards the hand-edited manifest (sizes, SHA-256, no orphan files), since a bad manifest makes every caller skip silently; `pnpm check` passes.

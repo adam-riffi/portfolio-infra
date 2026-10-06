@@ -20,11 +20,11 @@ This file records the state after completing the current portfolio-infra work th
 
 ## Next goals
 
-1. Complete the remaining Supabase Auth configuration once the production and preview redirect domains plus OAuth credentials are available. Record the resulting settings in `supabase/PROJECT.md`.
-2. Decide whether to address the unrelated Supabase advisor warnings for `dash`, `dash_demo`, `cron`, and leaked-password protection in their owning projects.
+1. Turn on the Supabase GitHub provider when agent-trace-viewer exists: create its GitHub OAuth app, enter the client ID and secret in the dashboard, add its exact production and preview redirect domains, and record them in `supabase/PROJECT.md`. Email sign-in and the `*.vercel.app` wildcard were removed on 2026-10-06.
+2. Decide whether to address the unrelated Supabase advisor warnings for `dash_demo.tick` (mutable `search_path`) and the `cron` anonymous-access policies in their owning projects. Leaked-password protection is moot while no password sign-in is enabled.
 
 ## Remaining test work
-- Re-run the shared Supabase operational checks after the outstanding Auth/OAuth settings are configured.
+- Re-run the Supabase security advisor after the GitHub provider is configured. The 2026-10-06 run after the Auth changes showed only the findings above.
 
 ## Operational notes
 
