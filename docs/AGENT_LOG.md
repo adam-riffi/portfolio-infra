@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-06 · codex · stack/m6/02-alerts · pending
+- Done: Added bounded GitHub issue reconciliation for uptime failures and recovery, including exact markers and duplicate cleanup.
+- Tests: Red commit `4b4898b` precedes implementation; focused alert tests, full 151-test suite and `pnpm check` pass.
+- Scope/decisions: M6 only; list every page before writes, mutate only bot-authored fully marked issues, and keep tokens and remote bodies out of errors.
+- Next: Independent review and merge, then add live targets and the six-hour workflow.
+
 ## 2026-10-06 · codex · stack/m6/01-checker · #17
 - Done: Added strict uptime targets and bounded, credential-safe HTTP probes.
 - Tests: Red9ec922e precedes implementation; full checks pass139 tests with100% measured coverage, including deadlines, redirects and byte limits.
