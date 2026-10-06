@@ -11,6 +11,8 @@ const targetSchema = z.strictObject({
       url.protocol === "https:" &&
       !url.username &&
       !url.password &&
+      !value.includes("?") &&
+      !value.includes("#") &&
       !url.search &&
       !url.hash
     );
