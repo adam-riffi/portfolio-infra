@@ -1,0 +1,31 @@
+name: release
+
+on:
+  push:
+    tags: ["v1.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.repository == 'adam-riffi/portfolio-infra'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Move the v1 action tag
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag --annotate --force v1 "$GITHUB_SHA" --message 'v1 release'
+          git push origin refs/tags/v1 --force
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || \
+            gh release create "$TAG" --generate-notes --title "$TAG"
