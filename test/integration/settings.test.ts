@@ -12,10 +12,17 @@ const sql = (name: string) =>
   readFileSync(new URL(`../../supabase/${name}`, import.meta.url), "utf8");
 const health = sql("health.sql");
 const storage = sql("storage.sql");
+const bootstrap = sql("bootstrap.sql");
 const client = new pg.Client({ connectionString: url });
 
 beforeAll(async () => {
   await client.connect();
+  // Make this file independently runnable; bootstrap itself is idempotent.
+  await client.query(bootstrap);
+  for (const role of ["anon", "authenticated"])
+    await client.query(
+      `grant ${role} to current_user with set true, inherit false`,
+    );
   // The Postgres-only service has no Storage API migrations. These are the three
   // documented bucket fields this configuration touches; hosted Storage owns the rest.
   await client.query("create schema if not exists storage");
@@ -50,7 +57,8 @@ describe("shared project settings", () => {
   );
 
   it("keeps the health function invoker-safe with a fixed search path", async () => {
-    const { rows } = await client.query(`select prosecdef, provolatile, proconfig,
+    const { rows } =
+      await client.query(`select prosecdef, provolatile, proconfig,
       exists (select from aclexplode(proacl) a
         where a.grantee = 0 and a.privilege_type = 'EXECUTE') as public_execute
       from pg_proc where oid = 'public.portfolio_health()'::regprocedure`);
