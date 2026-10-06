@@ -16,6 +16,15 @@ reported as a workflow failure, and dry runs make no writes.
 The [design](docs/DESIGN.md) defines subsequent milestones and architecture;
 [engineering standards](docs/ENGINEERING.md) define the delivery workflow.
 
+## Uptime
+
+`uptime/targets.json` checks the gacha-hub homepage and the shared Supabase
+health RPC. The `uptime.yml` workflow runs from `main` every six hours, opens a
+single bot-managed issue for each failed target, and closes it after recovery.
+The RPC's public key is supplied only at runtime through the
+`SUPABASE_PUBLISHABLE_KEY` repository variable; see
+[the uptime guide](uptime/README.md) and [ADR 0004](docs/adr/0004-initial-uptime-targets.md).
+
 ## Meme selection
 
 The pure core in `actions/pr-meme/src/select.ts` parses Conventional Commit titles

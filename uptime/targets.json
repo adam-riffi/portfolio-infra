@@ -1,0 +1,13 @@
+[
+  {
+    "name": "gacha-hub",
+    "url": "https://gacha-hub-two.vercel.app",
+    "expect": { "status": 200, "bodyIncludes": "<html" }
+  },
+  {
+    "name": "portfolio-db",
+    "url": "https://fztysvgkmauozxfyscaj.supabase.co/rest/v1/rpc/portfolio_health",
+    "expect": { "status": 200, "bodyIncludes": "ok" },
+    "headersFromEnv": { "apikey": "SUPABASE_PUBLISHABLE_KEY" }
+  }
+]

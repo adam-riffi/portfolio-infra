@@ -5,6 +5,8 @@ import { parseTargets } from "../check.ts";
 
 const read = (path: string): string =>
   readFileSync(path, "utf8").replaceAll("\r\n", "\n");
+const githubTokenExpression = "$" + "{{ github.token }}";
+const publishableKeyExpression = "$" + "{{ vars.SUPABASE_PUBLISHABLE_KEY }}";
 
 test("commits the two initial public uptime targets without a key value", () => {
   expect(parseTargets(JSON.parse(read("uptime/targets.json")))).toEqual([
@@ -52,8 +54,8 @@ test("the scheduled uptime job is bounded, main-only and least-privileged", () =
       expect.objectContaining({
         name: "Run uptime checks",
         env: {
-          GITHUB_TOKEN: "${{ github.token }}",
-          SUPABASE_PUBLISHABLE_KEY: "${{ vars.SUPABASE_PUBLISHABLE_KEY }}",
+          GITHUB_TOKEN: githubTokenExpression,
+          SUPABASE_PUBLISHABLE_KEY: publishableKeyExpression,
         },
         run: "node uptime/main.ts",
       }),

@@ -25,6 +25,24 @@ variable, never embedded in target JSON, URLs, issues or summaries. Redirects ar
 rejected so authorization cannot be forwarded to another origin. Missing header
 configuration stops the run before checks and does not manufacture outage alerts.
 
+The committed initial configuration is:
+
+```json
+[
+  {
+    "name": "gacha-hub",
+    "url": "https://gacha-hub-two.vercel.app",
+    "expect": { "status": 200, "bodyIncludes": "<html" }
+  },
+  {
+    "name": "portfolio-db",
+    "url": "https://fztysvgkmauozxfyscaj.supabase.co/rest/v1/rpc/portfolio_health",
+    "expect": { "status": 200, "bodyIncludes": "ok" },
+    "headersFromEnv": { "apikey": "SUPABASE_PUBLISHABLE_KEY" }
+  }
+]
+```
+
 ## Alternatives considered
 
 Waiting for undeployed apps leaves M6 untestable. An admin database connection in

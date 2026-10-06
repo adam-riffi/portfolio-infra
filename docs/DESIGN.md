@@ -72,7 +72,7 @@ portfolio-infra/
 ├── scripts/drive-sync/       # src/, test/ (Node script run by the workflow)
 ├── memes/                    # generated: images/<category>/<file>, manifest.json
 ├── supabase/                 # bootstrap.sql, PROJECT.md (settings log)
-├── uptime/                   # targets.json, check.ts
+├── uptime/                   # targets.json, checker, alert lifecycle and runner
 ├── templates/                # ENGINEERING.md, pull_request_template.md, dependabot.yml, pr-meme caller
 ├── .github/workflows/        # ci.yml, drive-sync.yml, uptime.yml, pr-meme.yml (dogfood), release.yml
 └── docs/                     # DESIGN.md, ENGINEERING.md, AGENT_LOG.md, adr/
@@ -190,6 +190,7 @@ Each role gets `USAGE` and `CREATE` on its schema only, default privileges on fu
 - **Unit:** title parsing (types, scopes, `!`, malformed titles → `general`), pool fallback order, deterministic index, manifest validation (zod), skip rules, marker detection, sync diffing (added, changed, removed, renamed).
 - **Property (fast-check):** the same input always yields the same image; every chosen image belongs to the computed pool; the pool is never empty when the manifest is not.
 - **Integration:** the action's `main()` against a recorded `pull_request` event payload with the GitHub API mocked by `msw` (create, already-commented, paginated comments, API error); the sync script against a fake Drive client returning fixture listings and image bytes.
+- **Uptime:** target parsing and header preflight, bounded probes, issue lifecycle reconciliation, and the six-hour workflow configuration.
 - **Workflow checks:** `actionlint`; dist freshness (`pnpm build && git diff --exit-code actions/pr-meme/dist`).
 - **End-to-end:** dogfood (this repository's PRs) and a manual check on a sandbox repository after each release.
 - Coverage: `select.ts`, `comment.ts`, `manifest.ts` and sync diffing at least 95%.
@@ -216,6 +217,7 @@ No Vercel project. Configuration lives in this repository's settings:
 | `GCP_WIF_PROVIDER` | Variable | Full resource name of the workload identity provider |
 | `GCP_SERVICE_ACCOUNT` | Variable | Service account email |
 | `GDRIVE_SA_KEY` | Secret (fallback only) | Service account JSON key |
+| `SUPABASE_PUBLISHABLE_KEY` | Variable | Public key used only for the health RPC target |
 
 **One-time setup (Georges)**
 1. Google Cloud: create a project, enable the Drive API, create a service account with no project roles.
@@ -224,6 +226,7 @@ No Vercel project. Configuration lives in this repository's settings:
 4. Set the repository variables above; run `drive-sync` manually once.
 5. After M4, tag `v1.0.0`; add the caller workflow to each project repository.
 6. Run `supabase/bootstrap.sql` in the `portfolio` project (created 2026-10-04 in Paris) and set each role's password; apply the Auth settings in §8 and record them in `supabase/PROJECT.md`.
+7. Set `SUPABASE_PUBLISHABLE_KEY` to the project's public key before running the uptime workflow.
 
 **Smoke checks:** a new PR in any project repository gets a meme comment within one minute; `drive-sync` run log shows "no changes" on an unchanged folder.
 
