@@ -1,6 +1,6 @@
 # 0004 — Initial uptime targets and database keepalive
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-06
 - Proposed by: Codex; decided by: Georges
 

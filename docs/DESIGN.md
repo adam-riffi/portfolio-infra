@@ -142,7 +142,7 @@ Outputs: `image-id`, `skipped-reason`.
 Optional `driveMd5` preserves upstream checksums for no-op syncs; see proposed ADR
 [0001](adr/0001-upstream-drive-checksum.md). Existing v1 manifests remain valid.
 
-**Uptime targets** (`uptime/targets.json`): `[{ "name": "dashboard-builder", "url": "https://…/api/health", "expect": { "status": 200, "bodyIncludes": "ok" } }]`.
+**Uptime targets** (`uptime/targets.json`): `[{ "name": "dashboard-builder", "url": "https://…/api/health", "expect": { "status": 200, "bodyIncludes": "ok" } }]`. Targets use HTTPS and exclude credentials, query strings and fragments. Optional `headersFromEnv` maps `apikey`, `authorization` or `x-*` header names to uppercase repository-variable names; values are resolved only at runtime and never appear in target JSON, URLs, issue bodies or job summaries. See [ADR 0004](adr/0004-initial-uptime-targets.md).
 
 ## 8. Data model and storage
 
