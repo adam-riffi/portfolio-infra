@@ -9,7 +9,7 @@ The shared database for every database-backed portfolio app (ENGINEERING.md §11
 | API URL | `https://fztysvgkmauozxfyscaj.supabase.co` |
 | Created | 2026-10-04 |
 
-## Auth (checked 2026-10-06)
+## Auth (checked 2026-10-07)
 
 Auth settings apply to every app in the project, so apps authorize through their own tables, never on "the user is signed in" (DESIGN.md §8).
 
@@ -18,7 +18,7 @@ Auth settings apply to every app in the project, so apps authorize through their
 | Anonymous sign-ins | On | dashboard-builder |
 | Email sign-in | Off. No app uses it, and it was the way in for redirect abuse | — |
 | Leaked-password protection | Off. Moot while no password sign-in is enabled; turn it on if email sign-in returns | — |
-| GitHub provider | Off; turn on with agent-trace-viewer | agent-trace-viewer |
+| GitHub provider | On. The GitHub OAuth app's callback is `https://fztysvgkmauozxfyscaj.supabase.co/auth/v1/callback`, scope `user:email`; its client secret lives only in the dashboard | agent-trace-viewer |
 | JWT signing | Asymmetric ES256, published at `/auth/v1/.well-known/jwks.json` | every app verifies tokens through the JWKS |
 | Redirect URLs | None. Anonymous sign-in needs no redirect. Add each app's exact production and preview domains when it adds email or OAuth sign-in; never a wildcard such as `https://*.vercel.app`, which accepts anyone's Vercel deployment | — |
 
@@ -85,3 +85,4 @@ payloads.
 | 2026-10-05 | Auth: redirect URLs | Added `https://*.vercel.app` (to be removed, see Auth) | dashboard-builder previews |
 | 2026-10-06 | Auth: email sign-in | Turned off | No app uses it; it was the way in for redirect abuse |
 | 2026-10-06 | Auth: redirect URLs | Removed `https://*.vercel.app` | It accepted any Vercel deployment; anonymous sign-in needs no redirect |
+| 2026-10-07 | Auth: GitHub provider | Turned on | For agent-trace-viewer; until its exact domains are added as redirect URLs, sign-ins return to the Site URL |
