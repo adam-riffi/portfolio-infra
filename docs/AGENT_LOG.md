@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-07 · claude · docs/readme-redesign · pending
+- Done: README redesigned: stack badges, screenshot, parts table, examples (caller, standards sync, uptime target), workflow and automation diagrams, meme selection steps, design philosophy, new-project steps, layout and test coverage. HANDOFF.md rewritten in the new §5 outline as this session's handoff.
+- Tests: Documentation only; `pnpm check` passes; the README and both Mermaid diagrams were checked rendered on GitHub.
+- Scope/decisions: No files removed: every tracked file is used; 21 stale remote branches of merged PRs were deleted (restorable from each PR).
+- Next: Meme category folders when there are enough images.
+
 ## 2026-10-07 · claude · docs/handoff-procedure · pending
 - Done: Added the handoff procedure to the shared standards: every session starts by reading `HANDOFF.md` and checking it against `main` and the open PRs, and ends by rewriting it in a fixed outline (ENGINEERING.md §5). AGENTS.md and the Copilot summary follow.
 - Tests: Template parity test keeps both ENGINEERING.md copies identical; `pnpm check` passes.
@@ -247,9 +253,3 @@ Entry format:
 - Tests: Red commit `58ee0ac` has four expected missing-template failures and two passing parity checks. `pnpm check` passes with eight tests, bundle freshness and actionlint for active workflows plus the caller template.
 - Scope/decisions: M0 only; `yaml` is test-only tooling. Caller activation remains M4; no design changes.
 - Next: Verify all checks, obtain independent review, then hand off #1 and #2 for Georges to merge bottom-up.
-
-## 2026-10-05 · codex · stack/m0/01-scaffold · #1
-- Done: Added the pinned TypeScript toolchain, empty action bundle, five required CI checks and local setup documentation. Independent review caught a disabled lint preset; restored recommended rules with a regression test.
-- Tests: Red commit `9fe7f6b` demonstrates the missing build; `pnpm check` passes, and a deliberate stale-bundle probe is rejected. All five CI jobs passed on `d764a3f`.
-- Scope/decisions: M0 only; one private root package, with development tooling dependencies. No design changes.
-- Next: Independent review of #1; complete and test the shared templates in the second PR.
