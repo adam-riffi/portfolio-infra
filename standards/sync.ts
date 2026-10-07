@@ -53,8 +53,14 @@ export function githubApi(token: string, request: typeof fetch = fetch): Api {
       signal: AbortSignal.timeout(10_000),
     });
     if (response.status === 404) return null;
-    if (!response.ok)
-      throw new Error(`GitHub request failed (HTTP ${response.status})`);
+    if (!response.ok) {
+      // GitHub names the permission a fine-grained token lacked; that is not secret.
+      const needs = response.headers.get("x-accepted-github-permissions");
+      const hint = needs && /^[\w=,; ]+$/.test(needs) ? `; needs ${needs}` : "";
+      throw new Error(
+        `GitHub ${method} ${route.split("?")[0]} failed (HTTP ${response.status}${hint})`,
+      );
+    }
     return response.json();
   };
 }
@@ -128,7 +134,7 @@ export async function syncAll(
       });
     } catch (error) {
       const message =
-        error instanceof Error && error.message.startsWith("GitHub request")
+        error instanceof Error && error.message.startsWith("GitHub ")
           ? error.message
           : "Sync failed";
       results.push({ repository, error: message });
