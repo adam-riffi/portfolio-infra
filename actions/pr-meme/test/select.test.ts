@@ -1,6 +1,11 @@
 import fc from "fast-check";
 import { describe, expect, test } from "vitest";
-import { fnv1a, selectImage, selectPool } from "../src/select.ts";
+import {
+  fnv1a,
+  parseCategory,
+  selectImage,
+  selectPool,
+} from "../src/select.ts";
 
 const images = Object.freeze([
   Object.freeze({ id: "z", category: "fix", path: "z.webp" }),
@@ -67,6 +72,21 @@ describe("32-bit FNV-1a", () => {
       }
       expect(fnv1a(input)).toBe(Number(reference));
     }
+  });
+});
+
+describe("avoiding recent images", () => {
+  test("skips an image used recently while the pool has another", () => {
+    // Without exclusion owner/repo#42 picks A from [A, z] (see below).
+    expect(
+      selectImage(images, "fix: retry", "owner/repo", 42, new Set(["A"])),
+    ).toBe(images[0]);
+  });
+
+  test("repeats an image when every image in the pool was used recently", () => {
+    expect(
+      selectImage(images, "fix: retry", "owner/repo", 42, new Set(["A", "z"])),
+    ).toBe(images[2]);
   });
 });
 
@@ -186,6 +206,36 @@ test("reordering the manifest preserves the choice and leaves inputs unchanged",
           selectImage(original, title, "owner/repo", 42),
         );
         expect(reordered).toEqual(before);
+      },
+    ),
+    propertyOptions,
+  );
+});
+
+test("never repeats a recent image while the pool has a fresh one", () => {
+  fc.assert(
+    fc.property(
+      manifestArbitrary,
+      categoryArbitrary,
+      fc.array(fc.string({ minLength: 1, maxLength: 20 }), { maxLength: 20 }),
+      fc.integer({ min: 1, max: 1_000_000 }),
+      (manifest, category, recentIds, number) => {
+        const title = `${category}: update`;
+        const recent = new Set([
+          ...recentIds,
+          ...manifest.slice(0, 3).map((image) => image.id),
+        ]);
+        const pool = selectPool(manifest, parseCategory(title));
+        const chosen = selectImage(
+          manifest,
+          title,
+          "owner/repo",
+          number,
+          recent,
+        );
+        expect(pool).toContain(chosen);
+        if (pool.some((image) => !recent.has(image.id)))
+          expect(recent.has(chosen?.id ?? "")).toBe(false);
       },
     ),
     propertyOptions,

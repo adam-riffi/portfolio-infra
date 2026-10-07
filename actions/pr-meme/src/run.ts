@@ -1,10 +1,12 @@
 import { z } from "zod";
-import { commentBody, ensureComment } from "./comment.ts";
+import { commentBody, ensureComment, recentMemeIds } from "./comment.ts";
 import { githubClient } from "./github.ts";
 import { fetchManifest } from "./manifest.ts";
 import { selectImage } from "./select.ts";
 import { skipReason } from "./skip.ts";
 
+// Avoid repeating the images of a repository's last 10 meme PRs (DESIGN.md §6).
+const recentPrs = 10;
 const repositoryName = z.string().regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/);
 const eventSchema = z.object({
   repository: z.object({
@@ -31,6 +33,7 @@ export interface ActionConfig {
 }
 export interface ActionResult {
   imageId?: string;
+  recentImages?: number;
   skippedReason?: string;
   warning?: boolean;
 }
@@ -64,21 +67,31 @@ export async function runAction(
     )
       throw new Error("Invalid configuration");
     const manifest = await fetchManifest(config.manifestUrl, request);
+    const client = githubClient(config.token, request);
+    // Best effort: a failed read only means an image may repeat.
+    const recent = await client.listRecentComments(repository.full_name).then(
+      (comments) => recentMemeIds(comments, recentPrs),
+      () => new Set<string>(),
+    );
     const image = selectImage(
       manifest.images,
       pr.title,
       repository.full_name,
       pr.number,
+      recent,
     );
     if (!image) return { skippedReason: "manifest-empty", warning: true };
     const created = await ensureComment(
-      githubClient(config.token, request),
+      client,
       repository.full_name,
       pr.number,
       commentBody(image, config.width),
     );
     return created
-      ? { imageId: image.id }
+      ? {
+          imageId: image.id,
+          ...(recent.size > 0 ? { recentImages: recent.size } : {}),
+        }
       : { skippedReason: "already-commented" };
   } catch {
     // Do not echo remote bodies, tokens, URLs or event data into runner logs.

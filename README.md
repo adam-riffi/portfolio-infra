@@ -31,7 +31,8 @@ The pure core in `actions/pr-meme/src/select.ts` parses Conventional Commit titl
 case-insensitively, including scopes and breaking-change markers. Unknown or
 malformed titles use `general`.
 
-Selection prefers the matching category, then `general`, then all images. It sorts
+Selection prefers the matching category, then `general`, then all images. It skips
+images posted on the repository's last 10 meme PRs unless none would remain, sorts
 the pool by image ID and uses the unsigned FNV-1a hash of `repository#PR number`
 modulo the pool size. Reordering a manifest with unique image IDs preserves the
 choice, and selection leaves the input untouched. An empty manifest returns no image.

@@ -40,7 +40,7 @@ The user is Georges and his coding agents (Claude Code, Codex, Copilot), which o
 - Dogfooding: this repository's own PRs get memes.
 
 **v1.1 (should)**
-- Avoid repeating the same image within the last N PRs of a repository (read recent bot comments).
+- Avoid repeating the same image within the last N PRs of a repository (read recent bot comments). Done: N = 10, [ADR 0006](adr/0006-avoid-recent-memes.md).
 - Standards sync: when `templates/ENGINEERING.md` changes, open PRs in each project repository with the new copy (fine-grained personal access token, `contents` and `pull-requests` write on the listed repositories).
 
 **Later**
@@ -84,7 +84,8 @@ portfolio-infra/
 **Selection algorithm** (pure function in `select.ts`):
 1. Parse the PR title's Conventional Commit type (case-insensitive, optional scope and `!`).
 2. Pool = images in that category; if empty, `general`; if empty, all images.
-3. Index = FNV-1a 32-bit hash of `"<repo full name>#<PR number>"` modulo pool size, after sorting the pool by image ID so the choice is stable across manifest edits that do not change the pool.
+3. Remove the images of the repository's last 10 meme comments, read from its newest 100 issue and PR comments. Keep the pool whole if that would empty it or if the read fails ([ADR 0006](adr/0006-avoid-recent-memes.md)).
+4. Index = FNV-1a 32-bit hash of `"<repo full name>#<PR number>"` modulo pool size, after sorting the pool by image ID so the choice is stable across manifest edits that do not change the pool.
 
 **Comment format.**
 ```
@@ -169,11 +170,12 @@ Each role gets `USAGE` and `CREATE` on its schema only, default privileges on fu
 | M4 Release | `v1.0.0` tag, moving `v1` tag in `release.yml`; caller added to two project repos | Memes appear on PRs in two other repositories within one minute |
 | M5 Database bootstrap | `bootstrap.sql` with sections per app; a check script that lists privileges; `PROJECT.md` with the current Auth and extension settings | Each app role can create tables in its schema and cannot read another app's schema |
 | M6 Uptime | `targets.json`, checker, issue open/close logic, schedule every six hours | A failing target opens one issue; recovery closes it |
+| M7 Recent images (v1.1) | recent-marker read; selection filter; `v1.1.0` release | A repository's last 10 meme PRs share no image while the pool has others |
 
 ## 10. Testing strategy
 
 - **Unit:** title parsing (types, scopes, `!`, malformed titles → `general`), pool fallback order, deterministic index, manifest validation (zod), skip rules, marker detection.
-- **Property (fast-check):** the same input always yields the same image; every chosen image belongs to the computed pool; the pool is never empty when the manifest is not.
+- **Property (fast-check):** the same input always yields the same image; every chosen image belongs to the computed pool; the pool is never empty when the manifest is not; a recent image is never chosen while the pool has a fresh one.
 - **Integration:** the action's `main()` against a recorded `pull_request` event payload with the GitHub API mocked by `msw` (create, already-commented, paginated comments, API error).
 - **Uptime:** target parsing and header preflight, bounded probes, issue lifecycle reconciliation, and the six-hour workflow configuration.
 - **Workflow checks:** `actionlint`; dist freshness (`pnpm build && git diff --exit-code actions/pr-meme/dist`).
