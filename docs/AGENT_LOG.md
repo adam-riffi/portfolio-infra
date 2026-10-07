@@ -19,6 +19,7 @@ Entry format:
 - Tests: Red commit `42ae3e3` precedes the implementation: unit, property (no recent pick while a fresh one exists) and msw run tests, including the failed-read path; `pnpm check` passes.
 - Scope/decisions: DESIGN.md v1.1 item, [ADR 0006](adr/0006-avoid-recent-memes.md); N is a constant, not an input.
 - Next: Merge, then tag `v1.1.0` so `@v1` callers get it; check the dogfood log line reports the avoided count.
+
 ## 2026-10-06 · claude · docs/readme-meme-screenshot · pending
 - Done: README shows a real pr-meme bot comment (gacha-hub #80); DESIGN.md §15 item checked.
 - Tests: Documentation only.
