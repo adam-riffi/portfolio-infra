@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-07 · claude · docs/handoff-sync-done · pending
+- Done: Recorded the first successful standards sync: gacha-hub #81 and dashboard-builder #31 opened by the workflow and merged.
+- Tests: Both `docs/ENGINEERING.md` copies have the template's blob SHA (`890b6aa`).
+- Scope/decisions: None.
+- Next: GitHub provider when agent-trace-viewer exists; meme category folders when there are enough images.
+
 ## 2026-10-07 · claude · docs/handoff-v1.1 · pending
 - Done: HANDOFF.md records v1.1 (#28 released as `v1.1.0`, #29 standards sync), the new callers in kanri and wuxing, the `dash_demo.tick` fix, and the first standards-sync runs, which stopped at branch creation because the token has Contents read-only.
 - Tests: Documentation only; live checks recorded in HANDOFF.md (dogfood log, `proconfig`, advisor, sync run).
