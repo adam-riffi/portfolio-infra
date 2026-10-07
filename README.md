@@ -68,6 +68,15 @@ scans paginated comments for its marker and applies label, author and fork skips
 Runs report the chosen image or skip reason in their job summary. This repository
 runs on GitHub Actions only.
 
+## Standards sync
+
+When `templates/ENGINEERING.md` changes on `main`, `standards-sync.yml` opens or
+updates a `standards-sync` PR in each repository listed in `standards/repos.json`,
+copying the template to `docs/ENGINEERING.md`. Repositories already in sync get no
+writes. The job uses the `STANDARDS_SYNC_TOKEN` secret, a fine-grained token with
+Contents and Pull requests read-write; run it by hand from the Actions tab after
+adding a repository.
+
 ## Using the templates
 
 Copy `templates/ENGINEERING.md` to `docs/ENGINEERING.md`, and copy

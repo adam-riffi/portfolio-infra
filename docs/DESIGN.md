@@ -41,7 +41,7 @@ The user is Georges and his coding agents (Claude Code, Codex, Copilot), which o
 
 **v1.1 (should)**
 - Avoid repeating the same image within the last N PRs of a repository (read recent bot comments). Done: N = 10, [ADR 0006](adr/0006-avoid-recent-memes.md).
-- Standards sync: when `templates/ENGINEERING.md` changes, open PRs in each project repository with the new copy (fine-grained personal access token, `contents` and `pull-requests` write on the listed repositories).
+- Standards sync: when `templates/ENGINEERING.md` changes, open PRs in each project repository with the new copy (fine-grained personal access token, `contents` and `pull-requests` write on the listed repositories). Done: `standards/`, `standards-sync.yml`.
 
 **Later**
 - Weekly digest issue listing PR activity across repositories.
@@ -70,8 +70,9 @@ portfolio-infra/
 ├── memes/                    # committed: images/<category>/<file>, manifest.json
 ├── supabase/                 # bootstrap.sql, PROJECT.md (settings log)
 ├── uptime/                   # targets.json, checker, alert lifecycle and runner
+├── standards/                # repos.json and the ENGINEERING.md sync
 ├── templates/                # ENGINEERING.md, pull_request_template.md, dependabot.yml, pr-meme caller
-├── .github/workflows/        # ci.yml, uptime.yml, pr-meme.yml (dogfood), release.yml
+├── .github/workflows/        # ci.yml, uptime.yml, standards-sync.yml, pr-meme.yml (dogfood), release.yml
 └── docs/                     # DESIGN.md, ENGINEERING.md, AGENT_LOG.md, adr/
 ```
 
@@ -171,6 +172,7 @@ Each role gets `USAGE` and `CREATE` on its schema only, default privileges on fu
 | M5 Database bootstrap | `bootstrap.sql` with sections per app; a check script that lists privileges; `PROJECT.md` with the current Auth and extension settings | Each app role can create tables in its schema and cannot read another app's schema |
 | M6 Uptime | `targets.json`, checker, issue open/close logic, schedule every six hours | A failing target opens one issue; recovery closes it |
 | M7 Recent images (v1.1) | recent-marker read; selection filter; `v1.1.0` release | A repository's last 10 meme PRs share no image while the pool has others |
+| M8 Standards sync (v1.1) | `repos.json`; branch, commit and PR logic; workflow on template changes | A changed template opens one PR per listed repository; an unchanged one writes nothing |
 
 ## 10. Testing strategy
 
@@ -188,6 +190,7 @@ Each role gets `USAGE` and `CREATE` on its schema only, default privileges on fu
 | --- | --- | --- |
 | `ci.yml` | PRs, pushes to `main` | `lint`, `typecheck`, `test`, `build` (includes dist freshness), `actionlint` |
 | `uptime.yml` | Every six hours, `workflow_dispatch` | `check` with `issues: write` |
+| `standards-sync.yml` | Pushes to `main` that change `templates/ENGINEERING.md` or `standards/repos.json`, `workflow_dispatch` | `sync`: opens or updates a `standards-sync` PR in each listed repository |
 | `pr-meme.yml` | PRs opened or reopened | Uses `./actions/pr-meme` from the PR branch (dogfood) |
 | `release.yml` | Tags `v1.*.*` | Moves the `v1` tag to the release commit, creates a GitHub Release |
 
@@ -200,6 +203,7 @@ No Vercel project. Configuration lives in this repository's settings:
 | Name | Kind | Value |
 | --- | --- | --- |
 | `SUPABASE_PUBLISHABLE_KEY` | Variable | Public key used only for the health RPC target |
+| `STANDARDS_SYNC_TOKEN` | Secret | Fine-grained token: Contents and Pull requests read-write on the listed repositories |
 
 **One-time setup (Georges)**
 1. After M4, tag `v1.0.0`; add the caller workflow to each project repository.

@@ -7,9 +7,9 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, "test/integration/**"],
     coverage: {
       provider: "v8",
-      include: ["actions/*/src/**/*.ts", "uptime/**/*.ts"],
+      include: ["actions/*/src/**/*.ts", "uptime/**/*.ts", "standards/**/*.ts"],
       // The runner entry point is platform glue; run.ts and all core are measured.
-      exclude: ["actions/pr-meme/src/main.ts"],
+      exclude: ["actions/pr-meme/src/main.ts", "standards/main.ts"],
       reporter: ["text", "json-summary"],
       thresholds: {
         lines: 80,
