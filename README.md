@@ -1,95 +1,213 @@
+<div align="center">
+
 # portfolio-infra
 
-Shared GitHub Actions automation for the portfolio: PR memes, database bootstrap,
-uptime checks and repository templates.
+**The shared workflow behind every portfolio repository.**<br>
+A meme on every pull request, standards kept in sync, one shared database and uptime checks.<br>
+All on GitHub Actions, with no secrets in the project repositories.
 
 [![CI](https://github.com/adam-riffi/portfolio-infra/actions/workflows/ci.yml/badge.svg)](https://github.com/adam-riffi/portfolio-infra/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Uptime](https://github.com/adam-riffi/portfolio-infra/actions/workflows/uptime.yml/badge.svg)](https://github.com/adam-riffi/portfolio-infra/actions/workflows/uptime.yml)
+[![Release](https://img.shields.io/github/v/release/adam-riffi/portfolio-infra?label=action)](https://github.com/adam-riffi/portfolio-infra/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-M0–M6 are implemented: tooling, deterministic selection, the fail-open Node 24
-action, the committed meme pool, the `v1` release, the shared database bootstrap
-and uptime checks. The release workflow publishes a stable `v1` action tag from
-each `v1.*.*` release. The meme pool is a fixed set of 90 images in `memes/`; the
-original Google Drive sync was removed ([ADR 0005](docs/adr/0005-remove-drive-sync.md)).
-The [design](docs/DESIGN.md) defines the architecture;
-[engineering standards](docs/ENGINEERING.md) define the delivery workflow.
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Node.js 24](https://img.shields.io/badge/Node.js-24-5FA04E?logo=nodedotjs&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=white)
+![Biome](https://img.shields.io/badge/Biome-60A5FA?logo=biome&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)
+![esbuild](https://img.shields.io/badge/esbuild-FFCF00?logo=esbuild&logoColor=black)
+![zod](https://img.shields.io/badge/zod-3E67B1?logo=zod&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=githubactions&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white)
 
-## Uptime
+<img src="docs/images/pr-meme-comment.png" alt="A pr-meme bot comment on a gacha-hub pull request" width="640">
 
-`uptime/targets.json` checks the gacha-hub homepage and the shared Supabase
-health RPC. The `uptime.yml` workflow runs from `main` every six hours, opens a
-single bot-managed issue for each failed target, and closes it after recovery.
-The RPC's public key is supplied only at runtime through the
-`SUPABASE_PUBLISHABLE_KEY` repository variable; see
-[the uptime guide](uptime/README.md) and [ADR 0004](docs/adr/0004-initial-uptime-targets.md).
+</div>
 
-## Meme selection
+## Contents
 
-![A pr-meme bot comment on gacha-hub PR #80](docs/images/pr-meme-comment.png)
+- [What it does](#what-it-does)
+- [Examples](#examples)
+- [How it works](#how-it-works)
+- [Design philosophy](#design-philosophy)
+- [Using it in a new project](#using-it-in-a-new-project)
+- [Repository layout](#repository-layout)
+- [Running locally](#running-locally)
+- [Limitations and next steps](#limitations-and-next-steps)
 
-The pure core in `actions/pr-meme/src/select.ts` parses Conventional Commit titles
-case-insensitively, including scopes and breaking-change markers. Unknown or
-malformed titles use `general`.
+## What it does
 
-Selection prefers the matching category, then `general`, then all images. It skips
-images posted on the repository's last 10 meme PRs unless none would remain, sorts
-the pool by image ID and uses the unsigned FNV-1a hash of `repository#PR number`
-modulo the pool size. Reordering a manifest with unique image IDs preserves the
-choice, and selection leaves the input untouched. An empty manifest returns no image.
-To add an image, follow the manifest notes in [DESIGN.md §7](docs/DESIGN.md#7-interfaces).
+| Part | What it does | Where |
+| --- | --- | --- |
+| **PR meme action** | Posts one meme comment on every pull request, matched to the PR type, avoiding the images of the repository's last 10 PRs. It never fails a build. | [`actions/pr-meme`](actions/pr-meme), [`memes/`](memes) |
+| **Standards sync** | When the shared `ENGINEERING.md` changes, opens a PR with the new copy in every listed repository. | [`standards/`](standards) |
+| **Shared database** | One Supabase project for every app, with a schema and a role per app, so no app can read another app's tables. | [`supabase/`](supabase) |
+| **Uptime** | Checks every live demo every 6 hours, opens an issue when one fails and closes it on recovery. It also keeps the free database from pausing. | [`uptime/`](uptime) |
+| **Templates** | The engineering standards, PR template, Dependabot config and meme caller that every repository copies. | [`templates/`](templates) |
+
+## Examples
+
+### A pull request gets a meme
+
+Within a minute of a PR opening, the bot comments with one picture. The run log says which image it chose and how many recent ones it avoided:
+
+```text
+PR meme: 1RQbwecvRfeqU0pvE7sIBkjJGjSZMRpar (avoided 7 recent)
+```
+
+### Add the meme bot to a repository
+
+Copy [`templates/pr-meme.yml`](templates/pr-meme.yml) to `.github/workflows/`. It is the only file a repository needs, and it uses no secrets:
+
+```yaml
+# .github/workflows/pr-meme.yml
+name: pr-meme
+on:
+  pull_request:
+    types: [opened, reopened]
+permissions:
+  pull-requests: write
+jobs:
+  meme:
+    if: >-
+      github.repository_owner == 'adam-riffi' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: adam-riffi/portfolio-infra/actions/pr-meme@v1
+```
+
+Add the `no-meme` label to skip a PR. Dependabot and Renovate PRs and PRs from forks are skipped automatically.
+
+### Keep a repository's standards in sync
+
+List it in [`standards/repos.json`](standards/repos.json) and give the `STANDARDS_SYNC_TOKEN` access to it. Merging that change runs the sync:
+
+```json
+["adam-riffi/gacha-hub", "adam-riffi/dashboard-builder", "adam-riffi/new-project"]
+```
+
+### Watch a live demo
+
+Add a target to [`uptime/targets.json`](uptime/targets.json). Header values come from repository variables, never from the file:
+
+```json
+{
+  "name": "new-project",
+  "url": "https://new-project.vercel.app/api/health",
+  "expect": { "status": 200, "bodyIncludes": "ok" }
+}
+```
+
+## How it works
+
+### The development workflow
+
+Every repository follows the same loop ([ENGINEERING.md §2 and §5](docs/ENGINEERING.md)). Coding agents keep their memory in two files: `HANDOFF.md` holds the current state and is rewritten every session, and `docs/AGENT_LOG.md` holds one entry per PR. The next session starts again from the top.
+
+```mermaid
+flowchart TB
+  subgraph start["Start of session"]
+    direction LR
+    a["Read HANDOFF.md"] --> b["Check it against main<br/>and the open PRs"] --> c["Read the newest<br/>agent log entries"]
+  end
+  subgraph each["Each pull request, repeated"]
+    direction LR
+    d["Draft PR"] --> e["Failing test"] --> f["Minimum code"] --> g["pnpm check<br/>and CI green"] --> h["Review by<br/>another agent"] --> i["Squash-merge and<br/>agent log entry"]
+  end
+  subgraph finish["End of session"]
+    direction LR
+    j["Rewrite HANDOFF.md"]
+  end
+  start --> each --> finish
+```
+
+### The automation
+
+```mermaid
+flowchart LR
+  pr["PR opened in<br/>any repository"] --> action["pr-meme action @v1<br/>picks from memes/"] --> comment["One meme comment<br/>on that PR"]
+  change["templates/ENGINEERING.md<br/>changed on main"] --> sync["standards-sync.yml"] --> prs["A sync PR in each<br/>listed repository"]
+  timer["Every 6 hours"] --> uptime["uptime.yml checks demos<br/>and the database"] --> issue["Issue opened on failure,<br/>closed on recovery"]
+```
+
+### How a meme is chosen
+
+1. Read the Conventional Commit type from the PR title (`fix: …` → `fix`). Anything else is `general`.
+2. Take the images in that category. If there are none, take `general`. If there are none, take every image.
+3. Drop the images posted on the repository's last 10 meme PRs, unless that leaves nothing.
+4. Sort by image ID and pick index `FNV-1a("<repo>#<PR number>") mod pool size`, so the same PR always gets the same image.
+5. Post it once. If a comment with the `<!-- pr-meme:v1` marker already exists, do nothing.
+
+The full design is in [DESIGN.md §6](docs/DESIGN.md#6-core-design-decisions).
+
+## Design philosophy
+
+- **No secrets in project repositories.** Callers use the built-in `GITHUB_TOKEN`, and nothing runs in forks or on fork PRs.
+- **Fail open.** A missing manifest or a GitHub error produces a warning, never a red build.
+- **Deterministic and idempotent.** The same PR gets the same image on every re-run, and never more than one comment.
+- **Functional core, imperative shell.** Selection and sync logic are pure functions. HTTP sits in thin adapters, tested through recorded requests with msw.
+- **Least privilege.** Each workflow asks only for the permissions it uses. Errors name the request and the missing permission, never response bodies or tokens.
+- **Tests first, small PRs.** Every change starts with a failing test, and stays under about 400 changed lines or becomes a stack.
+- **Documents are the source of truth.** [DESIGN.md](docs/DESIGN.md) is the spec, [ADRs](docs/adr) record every change to it, and [HANDOFF.md](HANDOFF.md) with [the agent log](docs/AGENT_LOG.md) carry memory between sessions.
+
+## Using it in a new project
+
+1. Copy the templates: `templates/ENGINEERING.md` to `docs/ENGINEERING.md`, `pull_request_template.md` and `dependabot.yml` to `.github/`, and `pr-meme.yml` to `.github/workflows/`.
+2. Start `HANDOFF.md` and `docs/AGENT_LOG.md` in the formats of [ENGINEERING.md §5](docs/ENGINEERING.md#5-agent-log-and-handoff).
+3. Add the repository to [`standards/repos.json`](standards/repos.json) and to the sync token.
+4. If it uses the database, run its section of [`supabase/bootstrap.sql`](supabase/bootstrap.sql) and set its role password ([PROJECT.md](supabase/PROJECT.md)).
+5. If it has a live demo, add it to [`uptime/targets.json`](uptime/targets.json).
+
+## Repository layout
+
+```text
+portfolio-infra/
+├── actions/pr-meme/   the action: src/, test/, and the committed dist/index.js bundle
+├── memes/             images/<category>/<id>.webp|gif and manifest.json
+├── standards/         repos.json and the ENGINEERING.md sync
+├── uptime/            targets.json, checker, alert issues and runner
+├── supabase/          bootstrap, privilege check, health RPC, storage, PROJECT.md
+├── templates/         files every repository copies
+├── scripts/build.ts   esbuild bundle for the action
+├── test/              repository-level and Postgres integration tests
+├── docs/              DESIGN.md, ENGINEERING.md, AGENT_LOG.md, adr/, images/
+├── HANDOFF.md         current state for the next session
+└── AGENTS.md          operating manual for coding agents
+```
 
 ## Running locally
 
-Install the Node version in `.nvmrc`, pnpm at the version in `packageManager`, and
-[actionlint 1.7.12](https://github.com/rhysd/actionlint/releases/tag/v1.7.12) on PATH.
-Then run `pnpm install --frozen-lockfile` and `pnpm check`.
+Install the Node version in [`.nvmrc`](.nvmrc), pnpm at the version in `packageManager`, and [actionlint 1.7.12](https://github.com/rhysd/actionlint/releases/tag/v1.7.12). Then:
 
-`pnpm check` runs Biome, TypeScript, Vitest, an esbuild rebuild with committed-bundle
-verification, and actionlint. Use `pnpm format` to apply formatting and lint fixes.
-After changing action source, run `pnpm build` and commit `actions/pr-meme/dist`.
-All commands are listed in [AGENTS.md](AGENTS.md).
+```bash
+pnpm install --frozen-lockfile
+pnpm check
+```
 
-## Testing and layout
+`pnpm check` runs Biome, TypeScript, Vitest with coverage, an esbuild rebuild that must match the committed bundle, and actionlint. Every command is listed in [AGENTS.md](AGENTS.md#commands).
 
-The bundle smoke test executes the real build, then runs the output in an isolated
-directory without credentials or runtime dependencies. Coverage is configured for
-80% overall and 95% per file in the designated core. Unit tests cover title parsing,
-fallback pools and known FNV-1a vectors. Seeded property tests run 500 cases each
-for pool availability, deterministic membership and manifest reordering. The empty
-entry point and generated bundle are excluded from coverage.
+<details>
+<summary>What the tests cover</summary>
 
-- `actions/pr-meme/`: selection core, bundle, unit tests and smoke test.
-- `scripts/build.ts`: esbuild configuration.
-- `templates/`: shared standards, PR template, Dependabot configuration and meme caller.
-- `.github/workflows/ci.yml`: required lint, typecheck, test, build and actionlint checks.
+- **Unit and property tests:** title parsing, pool fallback, FNV-1a vectors and recent-image avoidance. The fast-check property runs are seeded at 500 cases each.
+- **HTTP tests with msw:** the action's GitHub calls, uptime alert issues and the standards sync, including failures.
+- **Guard tests:** the committed manifest matches every image file, templates match their copies, and the caller matches ENGINEERING.md §14.
+- **Bundle smoke test:** the built action runs in an isolated directory without credentials.
+- **Integration tests:** `bootstrap.sql` and the privilege check against a disposable Supabase Postgres in CI.
+- **Coverage gates:** 80% overall and 95% per file for the selection core.
 
-This is one private package. The action validates events and public manifests,
-scans paginated comments for its marker and applies label, author and fork skips.
-Runs report the chosen image or skip reason in their job summary. This repository
-runs on GitHub Actions only.
+</details>
 
-## Standards sync
+## Limitations and next steps
 
-When `templates/ENGINEERING.md` changes on `main`, `standards-sync.yml` opens or
-updates a `standards-sync` PR in each repository listed in `standards/repos.json`,
-copying the template to `docs/ENGINEERING.md`. Repositories already in sync get no
-writes. The job uses the `STANDARDS_SYNC_TOKEN` secret, a fine-grained token with
-Contents and Pull requests read-write; run it by hand from the Actions tab after
-adding a repository.
-
-## Using the templates
-
-Copy `templates/ENGINEERING.md` to `docs/ENGINEERING.md`, and copy
-`templates/pull_request_template.md` and `templates/dependabot.yml` into `.github/`.
-The Dependabot template groups weekly npm/pnpm and GitHub Actions updates; other
-language repositories should adapt its package ecosystem to their manifests.
-After M4 publishes `v1`, copy `templates/pr-meme.yml` to `.github/workflows/` in
-portfolio repositories. It matches ENGINEERING.md section 14 exactly, needs no
-secrets, and guards against execution in forks or for fork PRs.
-
-Template tests enforce copy parity, the exact documented caller and weekly grouped
-updates. `pnpm lint:workflows` checks both active workflows and the caller template.
+- All 90 images are in `general`, so every PR draws from one pool. Category folders such as `memes/images/fix/` come once there are enough images.
+- The pool is edited by hand. Adding an image means committing the file and its manifest entry ([DESIGN.md §7](docs/DESIGN.md#7-interfaces)); a test checks both.
+- Images are served from `raw.githubusercontent.com`, which is fine at this volume; GitHub Pages is the fallback.
+- The standards sync covers `ENGINEERING.md` only.
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE)
