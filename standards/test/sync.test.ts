@@ -164,7 +164,13 @@ test("reports a failing repository without its response or the token, then conti
   serve(state({ onMain: template }));
   server.use(
     http.get("https://api.github.com/repos/adam-riffi/broken", () =>
-      HttpResponse.json({ message: "secret detail" }, { status: 403 }),
+      HttpResponse.json(
+        { message: "secret detail" },
+        {
+          status: 403,
+          headers: { "x-accepted-github-permissions": "contents=read" },
+        },
+      ),
     ),
   );
   const results = await syncAll(
@@ -175,7 +181,8 @@ test("reports a failing repository without its response or the token, then conti
   expect(results).toEqual([
     {
       repository: "adam-riffi/broken",
-      error: "GitHub request failed (HTTP 403)",
+      error:
+        "GitHub GET /repos/adam-riffi/broken failed (HTTP 403; needs contents=read)",
     },
     { repository, outcome: "in-sync" },
   ]);
