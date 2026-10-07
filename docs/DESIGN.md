@@ -225,4 +225,4 @@ No Vercel project. Configuration lives in this repository's settings:
 - [ ] A newly committed image is selectable on the next PR.
 - [ ] Bootstrap script applied; each app role verified isolated.
 - [ ] Uptime workflow green, alert issue tested once.
-- [ ] README with a screenshot of a meme comment and the setup steps.
+- [x] README with a screenshot of a meme comment and the setup steps.
