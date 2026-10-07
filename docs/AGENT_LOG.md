@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-07 · claude · docs/handoff-v1.1 · pending
+- Done: HANDOFF.md records v1.1 (#28 released as `v1.1.0`, #29 standards sync), the new callers in kanri and wuxing, the `dash_demo.tick` fix, and the first standards-sync runs, which stopped at branch creation because the token has Contents read-only.
+- Tests: Documentation only; live checks recorded in HANDOFF.md (dogfood log, `proconfig`, advisor, sync run).
+- Scope/decisions: None.
+- Next: Georges gives the token Contents and Pull requests read-write, then re-runs standards-sync and merges its two PRs; GitHub provider when agent-trace-viewer exists; meme category folders when there are enough images.
+
 ## 2026-10-07 · claude · fix/standards-sync-errors · pending
 - Done: Sync errors now name the failing request and the permission GitHub says the token lacked (`x-accepted-github-permissions`), still without response bodies or the token.
 - Tests: Red commit first; the per-repository failure test expects `GitHub GET /repos/adam-riffi/broken failed (HTTP 403; needs contents=read)`. `pnpm check` passes.
