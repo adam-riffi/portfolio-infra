@@ -21,6 +21,22 @@ export function hasMeme(comments: readonly Comment[]): boolean {
   return comments.some((comment) => comment.body?.includes("<!-- pr-meme:v1"));
 }
 
+/** Image IDs of the newest `limit` distinct markers, from comments listed newest first. */
+export function recentMemeIds(
+  comments: readonly Comment[],
+  limit: number,
+): Set<string> {
+  const ids = new Set<string>();
+  for (const comment of comments) {
+    if (ids.size >= limit) break;
+    const id = /<!-- pr-meme:v1 id=([A-Za-z0-9_-]+) -->/.exec(
+      comment.body ?? "",
+    )?.[1];
+    if (id) ids.add(id);
+  }
+  return ids;
+}
+
 /** Render validated metadata as the exact version-one comment format. */
 export function commentBody(image: Image, width: number): string {
   if (!Number.isInteger(width) || width < 1 || width > 10000)

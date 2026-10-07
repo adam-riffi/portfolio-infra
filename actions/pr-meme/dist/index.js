@@ -39299,6 +39299,17 @@ async function fetchManifest(url2, request = fetch) {
 function hasMeme(comments) {
   return comments.some((comment) => comment.body?.includes("<!-- pr-meme:v1"));
 }
+function recentMemeIds(comments, limit) {
+  const ids = /* @__PURE__ */ new Set();
+  for (const comment of comments) {
+    if (ids.size >= limit) break;
+    const id = /<!-- pr-meme:v1 id=([A-Za-z0-9_-]+) -->/.exec(
+      comment.body ?? ""
+    )?.[1];
+    if (id) ids.add(id);
+  }
+  return ids;
+}
 function commentBody(image, width) {
   if (!Number.isInteger(width) || width < 1 || width > 1e4)
     throw new Error("Invalid image width");
@@ -39317,6 +39328,7 @@ async function ensureComment(client, repository, number4, body) {
 }
 
 // actions/pr-meme/src/github.ts
+var commentsSchema = external_exports.array(external_exports.object({ body: external_exports.string().nullable() }));
 function githubClient(token, request = fetch) {
   const signal = AbortSignal.timeout(6e3);
   async function call(path, body) {
@@ -39340,7 +39352,13 @@ function githubClient(token, request = fetch) {
       const response = await call(
         `/repos/${repository}/issues/${number4}/comments?per_page=100&page=${page}`
       );
-      return external_exports.array(external_exports.object({ body: external_exports.string().nullable() })).parse(await response.json());
+      return commentsSchema.parse(await response.json());
+    },
+    async listRecentComments(repository) {
+      const response = await call(
+        `/repos/${repository}/issues/comments?sort=created&direction=desc&per_page=100`
+      );
+      return commentsSchema.parse(await response.json());
     },
     async createComment(repository, number4, body) {
       await call(
@@ -39387,10 +39405,12 @@ function fnv1a(value) {
   }
   return hash2 >>> 0;
 }
-function selectImage(images, title, repository, number4) {
+function selectImage(images, title, repository, number4, recent = /* @__PURE__ */ new Set()) {
   const pool = selectPool(images, parseCategory(title));
-  if (pool.length === 0) return void 0;
-  return pool[fnv1a(`${repository}#${number4}`) % pool.length];
+  const fresh = pool.filter((image) => !recent.has(image.id));
+  const choices = fresh.length > 0 ? fresh : pool;
+  if (choices.length === 0) return void 0;
+  return choices[fnv1a(`${repository}#${number4}`) % choices.length];
 }
 
 // actions/pr-meme/src/skip.ts
@@ -39407,6 +39427,7 @@ function skipReason(pr, labels, authors) {
 }
 
 // actions/pr-meme/src/run.ts
+var recentPrs = 10;
 var repositoryName = external_exports.string().regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/);
 var eventSchema = external_exports.object({
   repository: external_exports.object({
@@ -39442,20 +39463,29 @@ async function runAction(config2, event, request = fetch) {
     if (!config2.token || !Number.isInteger(config2.width) || config2.width < 1 || config2.width > 1e4)
       throw new Error("Invalid configuration");
     const manifest = await fetchManifest(config2.manifestUrl, request);
+    const client = githubClient(config2.token, request);
+    const recent = await client.listRecentComments(repository.full_name).then(
+      (comments) => recentMemeIds(comments, recentPrs),
+      () => /* @__PURE__ */ new Set()
+    );
     const image = selectImage(
       manifest.images,
       pr.title,
       repository.full_name,
-      pr.number
+      pr.number,
+      recent
     );
     if (!image) return { skippedReason: "manifest-empty", warning: true };
     const created = await ensureComment(
-      githubClient(config2.token, request),
+      client,
       repository.full_name,
       pr.number,
       commentBody(image, config2.width)
     );
-    return created ? { imageId: image.id } : { skippedReason: "already-commented" };
+    return created ? {
+      imageId: image.id,
+      ...recent.size > 0 ? { recentImages: recent.size } : {}
+    } : { skippedReason: "already-commented" };
   } catch {
     return { skippedReason: "error", warning: true };
   }
@@ -39479,7 +39509,8 @@ try {
     },
     event
   );
-  const description = result.imageId ? `PR meme: ${result.imageId}` : `PR meme skipped: ${result.skippedReason}`;
+  const avoided = result.recentImages ? ` (avoided ${result.recentImages} recent)` : "";
+  const description = result.imageId ? `PR meme: ${result.imageId}${avoided}` : `PR meme skipped: ${result.skippedReason}`;
   setOutput("image-id", result.imageId ?? "");
   setOutput("skipped-reason", result.skippedReason ?? "");
   info(description);

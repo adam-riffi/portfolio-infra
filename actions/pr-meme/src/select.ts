@@ -55,14 +55,20 @@ export function fnv1a(value: string): number {
   return hash >>> 0;
 }
 
-/** Choose by repository#PR number; an empty manifest has no choice. */
+/**
+ * Choose by repository#PR number, skipping `recent` image IDs unless that empties the
+ * pool; an empty manifest has no choice.
+ */
 export function selectImage<T extends SelectionImage>(
   images: readonly T[],
   title: string,
   repository: string,
   number: number,
+  recent: ReadonlySet<string> = new Set(),
 ): T | undefined {
   const pool = selectPool(images, parseCategory(title));
-  if (pool.length === 0) return undefined;
-  return pool[fnv1a(`${repository}#${number}`) % pool.length];
+  const fresh = pool.filter((image) => !recent.has(image.id));
+  const choices = fresh.length > 0 ? fresh : pool;
+  if (choices.length === 0) return undefined;
+  return choices[fnv1a(`${repository}#${number}`) % choices.length];
 }

@@ -28,8 +28,11 @@ try {
     },
     event,
   );
+  const avoided = result.recentImages
+    ? ` (avoided ${result.recentImages} recent)`
+    : "";
   const description = result.imageId
-    ? `PR meme: ${result.imageId}`
+    ? `PR meme: ${result.imageId}${avoided}`
     : `PR meme skipped: ${result.skippedReason}`;
   core.setOutput("image-id", result.imageId ?? "");
   core.setOutput("skipped-reason", result.skippedReason ?? "");
