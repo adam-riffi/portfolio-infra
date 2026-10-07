@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-07 · claude · feat/standards-sync · pending
+- Done: `standards-sync.yml` copies `templates/ENGINEERING.md` to each repository in `standards/repos.json` (gacha-hub, dashboard-builder) through a `standards-sync` PR; re-runs without changes write nothing.
+- Tests: Red commit precedes the implementation; msw tests cover in-sync, new branch, stale branch with open PR, current branch with and without a PR, a missing copy, per-repository failures without leaking responses or the token, and list validation. `pnpm check` passes.
+- Scope/decisions: DESIGN.md v1.1 item as specified; the token is the `STANDARDS_SYNC_TOKEN` secret Georges created.
+- Next: Merge, then dispatch the workflow once: both copies predate the Drive removal, so it should open two PRs.
+
 ## 2026-10-07 · claude · feat/avoid-recent-memes · pending
 - Done: The action skips images from the repository's last 10 meme comments (one page of the newest 100 issue and PR comments), keeping the full pool if that would empty it or the read fails.
 - Tests: Red commit `42ae3e3` precedes the implementation: unit, property (no recent pick while a fresh one exists) and msw run tests, including the failed-read path; `pnpm check` passes.
