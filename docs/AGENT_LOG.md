@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-07 · claude · fix/standards-sync-errors · pending
+- Done: Sync errors now name the failing request and the permission GitHub says the token lacked (`x-accepted-github-permissions`), still without response bodies or the token.
+- Tests: Red commit first; the per-repository failure test expects `GitHub GET /repos/adam-riffi/broken failed (HTTP 403; needs contents=read)`. `pnpm check` passes.
+- Scope/decisions: The first live run failed with a bare HTTP 403 for both repositories and created no branch; this makes the cause visible.
+- Next: Merge, re-run standards-sync, and fix the token's permissions if it names one.
+
 ## 2026-10-07 · claude · feat/standards-sync · pending
 - Done: `standards-sync.yml` copies `templates/ENGINEERING.md` to each repository in `standards/repos.json` (gacha-hub, dashboard-builder) through a `standards-sync` PR; re-runs without changes write nothing.
 - Tests: Red commit precedes the implementation; msw tests cover in-sync, new branch, stale branch with open PR, current branch with and without a PR, a missing copy, per-repository failures without leaking responses or the token, and list validation. `pnpm check` passes.
