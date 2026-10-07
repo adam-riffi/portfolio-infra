@@ -1,5 +1,10 @@
 import { expect, test, vi } from "vitest";
-import { commentBody, ensureComment, hasMeme } from "../src/comment.ts";
+import {
+  commentBody,
+  ensureComment,
+  hasMeme,
+  recentMemeIds,
+} from "../src/comment.ts";
 import { image } from "./fixtures.ts";
 
 test("formats exactly the documented marker and raw GitHub image", () => {
@@ -62,5 +67,21 @@ test("does not create a comment if listing fails and propagates posting errors",
   client.createComment.mockRejectedValue(new Error("post failed"));
   await expect(ensureComment(client, "owner/repo", 42, "body")).rejects.toThrow(
     "post failed",
+  );
+});
+test("reads image IDs from the newest meme markers, up to the limit", () => {
+  const comments = [
+    { body: "<!-- pr-meme:v1 id=newest -->\n<img>" },
+    { body: null },
+    { body: "normal comment" },
+    { body: "edited <!-- pr-meme:v1 id=Ab_-9 --> text" },
+    { body: "<!-- pr-meme:v1 id=oldest -->" },
+  ];
+  expect(recentMemeIds(comments, 2)).toEqual(new Set(["newest", "Ab_-9"]));
+  expect(recentMemeIds(comments, 10)).toEqual(
+    new Set(["newest", "Ab_-9", "oldest"]),
+  );
+  expect(recentMemeIds([{ body: "<!-- pr-meme:v1 id= -->" }], 10)).toEqual(
+    new Set(),
   );
 });

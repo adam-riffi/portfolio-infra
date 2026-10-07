@@ -2,11 +2,13 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
 import { runAction } from "../src/run.ts";
-import { manifest } from "./fixtures.ts";
+import { image, manifest } from "./fixtures.ts";
 
 const url = "https://example.test/manifest.json";
 const commentsUrl =
   "https://api.github.com/repos/adam-riffi/portfolio-infra/issues/42/comments";
+const recentUrl =
+  "https://api.github.com/repos/adam-riffi/portfolio-infra/issues/comments";
 const config = {
   eventName: "pull_request",
   token: "test-token",
@@ -28,7 +30,10 @@ const event = {
     head: { repo: { full_name: "adam-riffi/portfolio-infra" } },
   },
 };
-const server = setupServer(http.get(url, () => HttpResponse.json(manifest)));
+const server = setupServer(
+  http.get(url, () => HttpResponse.json(manifest)),
+  http.get(recentUrl, () => HttpResponse.json([])),
+);
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
@@ -150,4 +155,41 @@ test("fails open on invalid GitHub response and post errors", async () => {
     skippedReason: "error",
     warning: true,
   });
+});
+test("avoids images posted on the repository's recent PRs", async () => {
+  const other = { ...image, id: "other", path: "memes/images/fix/other.webp" };
+  const posted: unknown[] = [];
+  server.use(
+    // Without exclusion PR 42 picks drive_id from [drive_id, other].
+    http.get(url, () =>
+      HttpResponse.json({ ...manifest, images: [image, other] }),
+    ),
+    http.get(recentUrl, ({ request }) => {
+      const query = new URL(request.url).searchParams;
+      expect([
+        query.get("sort"),
+        query.get("direction"),
+        query.get("per_page"),
+      ]).toEqual(["created", "desc", "100"]);
+      return HttpResponse.json([{ body: "<!-- pr-meme:v1 id=drive_id -->" }]);
+    }),
+    http.get(commentsUrl, () => HttpResponse.json([])),
+    http.post(commentsUrl, async ({ request }) => {
+      posted.push(await request.json());
+      return HttpResponse.json({ id: 1 }, { status: 201 });
+    }),
+  );
+  expect(await runAction(config, event)).toEqual({
+    imageId: "other",
+    recentImages: 1,
+  });
+  expect(posted).toHaveLength(1);
+});
+test("still posts when recent comments cannot be read", async () => {
+  server.use(
+    http.get(recentUrl, () => new HttpResponse(null, { status: 403 })),
+    http.get(commentsUrl, () => HttpResponse.json([])),
+    http.post(commentsUrl, () => HttpResponse.json({ id: 1 }, { status: 201 })),
+  );
+  expect(await runAction(config, event)).toEqual({ imageId: "drive_id" });
 });
