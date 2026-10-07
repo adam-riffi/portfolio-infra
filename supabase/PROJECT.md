@@ -18,7 +18,7 @@ Auth settings apply to every app in the project, so apps authorize through their
 | Anonymous sign-ins | On | dashboard-builder |
 | Email sign-in | Off. No app uses it, and it was the way in for redirect abuse | — |
 | Leaked-password protection | Off. Moot while no password sign-in is enabled; turn it on if email sign-in returns | — |
-| GitHub provider | On. The GitHub OAuth app's callback is `https://fztysvgkmauozxfyscaj.supabase.co/auth/v1/callback`, scope `user:email`; its client secret lives only in the dashboard | agent-trace-viewer |
+| GitHub provider | Off, and its OAuth app is deleted. No app offers GitHub sign-in yet. When one does, create a GitHub OAuth app with callback `https://fztysvgkmauozxfyscaj.supabase.co/auth/v1/callback`, enter its client ID and secret in the dashboard, and add that app's exact redirect domains | — |
 | JWT signing | Asymmetric ES256, published at `/auth/v1/.well-known/jwks.json` | every app verifies tokens through the JWKS |
 | Redirect URLs | None. Anonymous sign-in needs no redirect. Add each app's exact production and preview domains when it adds email or OAuth sign-in; never a wildcard such as `https://*.vercel.app`, which accepts anyone's Vercel deployment | — |
 
@@ -86,3 +86,4 @@ payloads.
 | 2026-10-06 | Auth: email sign-in | Turned off | No app uses it; it was the way in for redirect abuse |
 | 2026-10-06 | Auth: redirect URLs | Removed `https://*.vercel.app` | It accepted any Vercel deployment; anonymous sign-in needs no redirect |
 | 2026-10-07 | Auth: GitHub provider | Turned on | For agent-trace-viewer; until its exact domains are added as redirect URLs, sign-ins return to the Site URL |
+| 2026-10-07 | Auth: GitHub provider | Turned off; OAuth app deleted | agent-trace-viewer is not started; keep unused sign-in methods off until a project needs them |

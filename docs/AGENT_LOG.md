@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-07 · claude · docs/supabase-github-off · pending
+- Done: Georges turned the Supabase GitHub provider back off and deleted its OAuth app; no project uses GitHub sign-in yet.
+- Tests: Documentation only. Live `/auth/v1/settings` lists only `anonymous_users`; `/auth/v1/authorize?provider=github` returns HTTP 400.
+- Scope/decisions: Sign-in methods are app features, set up by the project that needs them, not by portfolio-infra ahead of time.
+- Next: Meme category folders when there are enough images.
+
 ## 2026-10-07 · claude · docs/supabase-github-provider · pending
 - Done: Recorded that Georges turned on the Supabase GitHub provider for agent-trace-viewer.
 - Tests: Documentation only. Live `/auth/v1/settings` lists `anonymous_users` and `github`; `/auth/v1/authorize?provider=github` returns 302 to GitHub with a client ID and the project callback; the security advisor shows only the accepted warnings.
