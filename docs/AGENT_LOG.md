@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-07 · claude · docs/handoff-procedure · pending
+- Done: Added the handoff procedure to the shared standards: every session starts by reading `HANDOFF.md` and checking it against `main` and the open PRs, and ends by rewriting it in a fixed outline (ENGINEERING.md §5). AGENTS.md and the Copilot summary follow.
+- Tests: Template parity test keeps both ENGINEERING.md copies identical; `pnpm check` passes.
+- Scope/decisions: Requested by Georges for all projects; merging the template triggers the standards sync to gacha-hub and dashboard-builder.
+- Next: Merge the two sync PRs it opens; README redesign in the next PR.
+
 ## 2026-10-07 · claude · docs/supabase-github-off · pending
 - Done: Georges turned the Supabase GitHub provider back off and deleted its OAuth app; no project uses GitHub sign-in yet.
 - Tests: Documentation only. Live `/auth/v1/settings` lists only `anonymous_users`; `/auth/v1/authorize?provider=github` returns HTTP 400.
@@ -247,9 +253,3 @@ Entry format:
 - Tests: Red commit `9fe7f6b` demonstrates the missing build; `pnpm check` passes, and a deliberate stale-bundle probe is rejected. All five CI jobs passed on `d764a3f`.
 - Scope/decisions: M0 only; one private root package, with development tooling dependencies. No design changes.
 - Next: Independent review of #1; complete and test the shared templates in the second PR.
-
-## 2026-10-04 · claude · (none) · (none)
-- Done: Repository pack created: DESIGN.md, ENGINEERING.md, AGENTS.md, CLAUDE.md, Copilot instructions, PR template, ADR template.
-- Tests: none yet.
-- Scope/decisions: stack and hosting as stated in the header of `docs/DESIGN.md`.
-- Next: milestone M0 (scaffold) from `docs/DESIGN.md` §9, after the one-time setup in `docs/ENGINEERING.md` §16.
