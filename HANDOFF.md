@@ -24,13 +24,13 @@ This file records the state after completing portfolio-infra through M8 (v1.1) a
 
 ## Next goals
 
-1. Turn on the Supabase GitHub provider when agent-trace-viewer exists: create its GitHub OAuth app, enter the client ID and secret in the dashboard, add its exact production and preview redirect domains, and record them in `supabase/PROJECT.md`. Email sign-in and the `*.vercel.app` wildcard were removed on 2026-10-06.
+1. When agent-trace-viewer is deployed, add its exact production and preview domains as Supabase redirect URLs and record them in `supabase/PROJECT.md`. The GitHub provider is already on (2026-10-07), so this is the only Auth step left; email sign-in and the `*.vercel.app` wildcard were removed on 2026-10-06.
 2. Add category folders under `memes/images/` (for example `fix/`, `feat/`) once there are enough images for each; every PR draws from `general` today.
 
 The remaining advisor warnings are accepted: the `cron` anonymous-access policies are pg_cron's own, and leaked-password protection is moot while no password sign-in is enabled.
 
 ## Remaining test work
-- Re-run the Supabase security advisor after the GitHub provider is configured. The 2026-10-07 run showed only the accepted warnings above.
+- None. The security advisor re-run after the GitHub provider went on (2026-10-07) shows only the accepted warnings above, and `/auth/v1/authorize?provider=github` redirects to GitHub with the project's callback.
 
 ## Operational notes
 

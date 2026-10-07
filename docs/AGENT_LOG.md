@@ -14,6 +14,12 @@ Entry format:
 
 ---
 
+## 2026-10-07 · claude · docs/supabase-github-provider · pending
+- Done: Recorded that Georges turned on the Supabase GitHub provider for agent-trace-viewer.
+- Tests: Documentation only. Live `/auth/v1/settings` lists `anonymous_users` and `github`; `/auth/v1/authorize?provider=github` returns 302 to GitHub with a client ID and the project callback; the security advisor shows only the accepted warnings.
+- Scope/decisions: None.
+- Next: Add agent-trace-viewer's exact redirect domains when it is deployed; meme category folders when there are enough images.
+
 ## 2026-10-07 · claude · docs/handoff-sync-done · pending
 - Done: Recorded the first successful standards sync: gacha-hub #81 and dashboard-builder #31 opened by the workflow and merged.
 - Tests: Both `docs/ENGINEERING.md` copies have the template's blob SHA (`890b6aa`).
