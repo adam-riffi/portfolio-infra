@@ -105,7 +105,7 @@ Add a target to [`uptime/targets.json`](uptime/targets.json). Header values come
 
 ### The development workflow
 
-Every repository follows the same loop ([ENGINEERING.md §2 and §5](docs/ENGINEERING.md)). Coding agents keep their memory in two files: `HANDOFF.md` holds the current state and is rewritten every session, and `docs/AGENT_LOG.md` holds one entry per PR.
+Every repository follows the same loop ([ENGINEERING.md §2 and §5](docs/ENGINEERING.md)). Coding agents keep their memory in two files: `HANDOFF.md` holds the current state and is rewritten every session, and `docs/AGENT_LOG.md` holds one entry per PR. The next session starts again from the top.
 
 ```mermaid
 flowchart TB
@@ -122,7 +122,6 @@ flowchart TB
     j["Rewrite HANDOFF.md"]
   end
   start --> each --> finish
-  finish -. next session .-> start
 ```
 
 ### The automation
