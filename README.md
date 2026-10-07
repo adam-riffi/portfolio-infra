@@ -108,45 +108,30 @@ Add a target to [`uptime/targets.json`](uptime/targets.json). Header values come
 Every repository follows the same loop ([ENGINEERING.md §2 and §5](docs/ENGINEERING.md)). Coding agents keep their memory in two files: `HANDOFF.md` holds the current state and is rewritten every session, and `docs/AGENT_LOG.md` holds one entry per PR.
 
 ```mermaid
-flowchart LR
-  start([New session]) --> read["Read HANDOFF.md<br/>check it against main<br/>and the open PRs"]
-  read --> plan["Plan<br/>draft PR"]
-  plan --> red["Red<br/>failing test"]
-  red --> green["Green<br/>minimum code"]
-  green --> verify["Verify<br/>pnpm check"]
-  verify --> ci{"CI green?"}
-  ci -- no --> green
-  ci -- yes --> review["Review by<br/>another agent"]
-  review --> merge["Squash-merge<br/>to main"]
-  merge --> log["Agent log entry"]
-  log --> more{"More work<br/>this session?"}
-  more -- yes --> plan
-  more -- no --> handoff["Rewrite HANDOFF.md"]
-  handoff -.-> start
+flowchart TB
+  subgraph start["Start of session"]
+    direction LR
+    a["Read HANDOFF.md"] --> b["Check it against main<br/>and the open PRs"] --> c["Read the newest<br/>agent log entries"]
+  end
+  subgraph each["Each pull request, repeated"]
+    direction LR
+    d["Draft PR"] --> e["Failing test"] --> f["Minimum code"] --> g["pnpm check<br/>and CI green"] --> h["Review by<br/>another agent"] --> i["Squash-merge and<br/>agent log entry"]
+  end
+  subgraph finish["End of session"]
+    direction LR
+    j["Rewrite HANDOFF.md"]
+  end
+  start --> each --> finish
+  finish -. next session .-> start
 ```
 
 ### The automation
 
 ```mermaid
 flowchart LR
-  subgraph repos["Every portfolio repository"]
-    pr["PR opened"]
-  end
-  subgraph infra["portfolio-infra"]
-    action["pr-meme action @v1"]
-    pool[("memes/<br/>90 images")]
-    template["templates/ENGINEERING.md"]
-    sync["standards-sync.yml"]
-    uptime["uptime.yml<br/>every 6 hours"]
-    issues["Alert issues"]
-  end
-  pr --> action
-  action -- reads the manifest --> pool
-  action -- one comment --> pr
-  template -- changed on main --> sync
-  sync -- opens a PR --> repos
-  uptime -- checks --> demos["Live demos and the<br/>Supabase health RPC"]
-  uptime -- opens or closes --> issues
+  pr["PR opened in<br/>any repository"] --> action["pr-meme action @v1<br/>picks from memes/"] --> comment["One meme comment<br/>on that PR"]
+  change["templates/ENGINEERING.md<br/>changed on main"] --> sync["standards-sync.yml"] --> prs["A sync PR in each<br/>listed repository"]
+  timer["Every 6 hours"] --> uptime["uptime.yml checks demos<br/>and the database"] --> issue["Issue opened on failure,<br/>closed on recovery"]
 ```
 
 ### How a meme is chosen
